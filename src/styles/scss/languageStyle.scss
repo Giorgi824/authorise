@@ -1,0 +1,104 @@
+.mm-lang {
+  position: relative;
+  .mm-lang__current {
+    // @include flexBox(inline-flex, center, center, nowrap, 16px);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    .mm-lang__symbol {
+      //   @include flexBox(inline-flex, center, center, nowrap, 8px);
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      .mm-lang__lang {
+        font-family: var(--firagoBook);
+        color: var(--cl-84);
+        font-size: var(--ft-12);
+        @media (max-width: 480px) {
+          display: none;
+        }
+      }
+      .mm-lang__icon {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        // height: 16px;
+      }
+    }
+    .mm-lang__arrow {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .mm-lang__current.active {
+    .mm-lang__arrow {
+      transform: rotateZ(180deg);
+    }
+  }
+  .mm-lang__choose {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background-color: var(--bg-dark-light);
+    width: 280px;
+    padding: 24px;
+    border-radius: 8px;
+    flex-direction: column;
+    // display: none;
+    &::after {
+      position: absolute;
+      content: "";
+      display: block;
+      width: calc(100% - 32px);
+      z-index: -1;
+      height: calc(100% - 24px);
+      // background-color: red;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: var(--box-shadow);
+    }
+    > a {
+      display: flex;
+      align-items: center;
+      padding: 16px 0;
+      gap: 16px;
+      font-family: var(--firagoBook);
+      color: var(--cl-84);
+      font-size: 16px;
+      border-bottom: 1px solid var(--br-cl-ec);
+      // transition: 0.1s ease-in-out;
+      line-height: 16px;
+      &:hover {
+        color: var(--cl-26);
+      }
+      .mark-icon {
+        margin-left: auto;
+        display: none;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    > a.active {
+      color: var(--cl-26);
+      font-family: var(--firagoMedium);
+      .mark-icon {
+        display: inline-flex;
+      }
+    }
+    > a:first-child {
+      padding-top: 0;
+    }
+    > a:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+  }
+  .mm-lang__choose.active {
+    display: flex;
+  }
+}

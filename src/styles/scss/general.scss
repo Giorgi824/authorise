@@ -1,0 +1,120 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+ul,
+ol {
+  list-style-type: none;
+}
+a,
+span,
+small {
+  display: inline-block;
+}
+a {
+  text-decoration: none;
+  cursor: pointer;
+}
+button {
+  border: none;
+  display: inline-flex;
+  cursor: pointer;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-dark-light);
+  scroll-behavior: smooth;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  background-color: yellow !important;
+}
+
+// mode styles
+.dark-light-mode {
+  > div {
+    border-radius: 100px;
+    // overflow: hidden;
+    display: inline-flex;
+    background-color: var(--bg-mode);
+    padding: 4px;
+    border-radius: 12px;
+    position: relative;
+    .mm-btn-div {
+      position: relative;
+      &::after {
+        position: absolute;
+        width: calc(100% - 8px);
+        height: calc(100% - 4px);
+        top: 4px;
+        left: 50%;
+        transform: translateX(-50%);
+        content: "";
+        display: block;
+        border-radius: 10px;
+      }
+    }
+    button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      border-radius: 10px;
+      font-size: 1rem;
+      background-color: transparent;
+      cursor: pointer;
+      padding: 12px 16px;
+      font-family: var(--firagoBook);
+      font-weight: 350;
+      z-index: 1;
+      position: relative;
+      svg {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        max-width: 24px;
+        min-height: 24px;
+        max-height: 24px;
+      }
+    }
+    .dark {
+      color: var(--cl-84-ff);
+      background-color: var(--bg-btn-dark);
+      &:hover {
+        color: var(--cl-26);
+        svg {
+          path {
+            fill: var(--cl-26);
+          }
+        }
+      }
+      svg {
+        path {
+          fill: var(--cl-84-ff);
+        }
+      }
+    }
+    .light {
+      color: var(--cl-sun);
+      background-color: var(--bg-btn-light);
+      &:hover {
+        color: var(--cl-26);
+        svg {
+          path {
+            fill: var(--cl-26);
+          }
+        }
+      }
+      svg {
+        path {
+          fill: var(--cl-sun);
+        }
+      }
+    }
+  }
+}
