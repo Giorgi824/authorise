@@ -13,6 +13,7 @@ function PhoneInput() {
   const [phoneCodeList, setPhoneCodeList] = useState([]);
   const [staticPhoneCodeList, setStaticPhoneCodeList] = useState();
   const [chosenCountryCode, setChosenCountryCode] = useState({});
+  const [active, setActive] = useState(false);
   if (!localStorage.getItem("MM.countryCode")) {
     // console.log(12);
   }
@@ -35,7 +36,6 @@ function PhoneInput() {
   }, []);
   const getFormatedDate = () => {
     const date = new Date();
-
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
@@ -72,7 +72,9 @@ function PhoneInput() {
           },
         }
       );
-      const data = res.data.data;
+      const data = res.data.data.map((item) => {
+        return { ...item, isActive: false };
+      });
       const defaultFlag = data[0];
       setChosenCountryCode(defaultFlag);
       setPhoneCodeList(data);
@@ -134,7 +136,7 @@ function PhoneInput() {
               />
             </div>
             <ul className="mm-phone-country__codes">
-              {phoneCodeList.map((item, idx) => {
+              {phoneCodeList.map((item) => {
                 return (
                   <li
                     data-ccode={item.ccode}
