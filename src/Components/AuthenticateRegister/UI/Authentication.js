@@ -17,63 +17,6 @@ import axios from "axios";
 import SearchSvg from "../../../svges/SearchSvg";
 import PhoneInput from "../../LegalEntity/UI/PhoneInput";
 const Authentication = () => {
-  // const [phoneNumber, setPhoneNumber] = useState("");
-  // function insertBlankAfterEveryThreeCharacters(str) {
-  //   var str = str.split(" ").join("").split("");
-  //   var formatted = [];
-  //   while (str.length) {
-  //     for (var i = 0; i < 3 && str.length; i++) {
-  //       formatted.push(str.shift());
-  //     }
-  //     if (str.length) formatted.push(" ");
-  //   }
-  //   return formatted.join("");
-  // }
-  // const getFormatedDate = () => {
-  //   const date = new Date();
-
-  //   const year = date.getFullYear();
-  //   const month = date.getMonth() + 1;
-  //   const day = date.getDate();
-  //   const hours = date.getHours();
-  //   const minutes = date.getMinutes();
-  //   const seconds = date.getSeconds();
-  //   return (
-  //     year +
-  //     "-" +
-  //     month +
-  //     "-" +
-  //     day +
-  //     " " +
-  //     hours +
-  //     ":" +
-  //     minutes +
-  //     ":" +
-  //     seconds
-  //   );
-  // };
-  // console.log(getFormatedDate());
-  // const result = () => {
-  //   axios
-  //     .get("https://dev-api.mp.ge/authentication/getCountries", {
-  //       method: "GET",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //         soft: "mp_web_app",
-  //         softVersion: "3.0.0",
-  //         requestDate: "2023-01-12 09:34:10",
-  //         language: "GE",
-  //       },
-  //     })
-  //     .then((res) => {
-  //       console.log(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-  // result();
   const [mode, setMode] = useState(null);
   const getCurrentTheme = () => {
     let theme = window.matchMedia("(prefers-color-scheme: dark)").matches
