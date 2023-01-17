@@ -2,9 +2,6 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import BlankSpace from "../../PlainFunctions/BlankAfterThree";
 import ArrowSvg from "../../../svges/ArrowSvg";
 import SearchSvg from "../../../svges/SearchSvg";
-// import EngSvg from "../../../img/eng.svg";
-// import RusSvg from "../../../img/rus.svg";
-// import GeoSvg from "../../../img/geo.svg";
 import exclimationSvg from "../../../img/exclimation.svg";
 import axios from "axios";
 function PhoneInput() {
@@ -13,31 +10,11 @@ function PhoneInput() {
   const [phoneCodeList, setPhoneCodeList] = useState([]);
   const [staticPhoneCodeList, setStaticPhoneCodeList] = useState();
   const [chosenCountryCode, setChosenCountryCode] = useState({});
-  const [active, setActive] = useState(false);
   const [debounceCode, setDebounceCode] = useState("");
   const [errorDrop, setErrorDrop] = useState(true);
-  if (!localStorage.getItem("MM.countryCode")) {
-    console.log(12);
-  }
-
-  // Debounce
-  // const updateDebounceText = debounce((text) => {
-  //   // console.log(text);
-  // });
-  // function debounce(cb, delay = 1000) {
-  //   let timer;
-  //   return (...args) => {
-  //     if (timer) {
-  //       clearTimeout(timer);
-  //     }
-  //     timer = setTimeout(() => {
-  //       cb(...args);
-  //       console.log(args);
-  //     }, delay);
-  //   };
-  // }
+  const [focusedInput, setFocusedInput] = useState(false);
   const handleChange = (result) => setDebounceCode(result);
-  const debounce = (func) => {
+  const debounce = (func, delay = 1500) => {
     let timer;
     return function (...args) {
       const context = this;
@@ -45,12 +22,12 @@ function PhoneInput() {
       timer = setTimeout(() => {
         timer = null;
         func.apply(context, args);
-      }, 1500);
+      }, delay);
     };
   };
+  const optimizedFn = useCallback(debounce(handleChange), []);
   // end of debounce function
 
-  const optimizedFn = useCallback(debounce(handleChange), []);
   function activatedCode(country, attr) {
     phoneCodeList.map((country) => {
       country.code === attr
@@ -69,7 +46,9 @@ function PhoneInput() {
   // chosen country
   const langRef = useRef();
   const countryRef = useRef();
+  const codeRef = useRef();
   useEffect(() => {
+    codeRef.current.focus();
     result();
     document.addEventListener("click", () => {
       if (langRef.current.classList.contains("active")) {
@@ -85,18 +64,20 @@ function PhoneInput() {
     return regEx.test(input);
   }
 
-  // debounce useeffect
-  useEffect(() => {
-    // console.log(debounceCode, chosenCountryCode);
+  function checkingCode(val) {
     const currRegex = chosenCountryCode.regex;
-    const currInput = debounceCode;
+    const currInput = val;
     const result = regexed(currRegex, currInput);
-    console.log(currInput.trim().length);
     if (currInput.trim().length !== 0) {
       setErrorDrop(result);
     } else if (currInput.trim().length == 0) {
       setErrorDrop(true);
     }
+  }
+
+  // debounce useeffect
+  useEffect(() => {
+    checkingCode(debounceCode);
   }, [debounceCode]);
 
   const getFormatedDate = () => {
@@ -163,13 +144,17 @@ function PhoneInput() {
   return (
     <div className="mm-phone-fill">
       <label
-        className={`labeled-div ${errorDrop ? "" : "error"}`}
+        className={`labeled-div ${errorDrop ? "" : "error"} ${
+          focusedInput ? "focused bg-transparent" : ""
+        }`}
         onClick={(e) => {
           e.preventDefault();
         }}
       >
         <div
-          className={`mm-phone-chosen ${phoneToggle ? "active" : ""}`}
+          className={`mm-phone-chosen ${phoneToggle ? "active" : ""} ${
+            focusedInput ? "bg-transparent" : ""
+          }`}
           onClick={(e) => {
             e.stopPropagation();
             setPhoneToggle(!phoneToggle);
@@ -188,70 +173,73 @@ function PhoneInput() {
             ref={langRef}
             className={`mm-phone-drop ${phoneToggle ? "active" : ""}`}
           >
-            <div
-              className="mm-phone-search"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <button type="button">
-                <SearchSvg />
-              </button>
-              <input
-                type="text"
-                placeholder="ძიება"
-                ref={countryRef}
-                onChange={(e) => {
-                  emptyCountryInput(countryRef);
+            <div>
+              <div
+                className="mm-phone-search"
+                onClick={(e) => {
+                  e.stopPropagation();
                 }}
-              />
+              >
+                <button type="button">
+                  <SearchSvg />
+                </button>
+                <input
+                  type="text"
+                  placeholder="ძიება"
+                  ref={countryRef}
+                  onChange={(e) => {
+                    emptyCountryInput(countryRef);
+                  }}
+                />
+              </div>
+              <ul className="mm-phone-country__codes">
+                {phoneCodeList.map((item) => {
+                  return (
+                    <li
+                      data-ccode={item.ccode}
+                      data-code={item.code}
+                      data-country={item.country}
+                      data-placeholder={item.example}
+                      data-img={`data:image/jpeg;base64,${item.image}`}
+                      data-regex={item.regex}
+                      data-code-length={item.length}
+                      className={item.isActive ? "active" : ""}
+                      key={Math.random()}
+                      onClick={(e) => {
+                        const attr = e.currentTarget.getAttribute("data-code");
+                        const result = staticPhoneCodeList.filter((item) => {
+                          return item.code == attr;
+                        });
+                        localStorage.setItem(
+                          "MM.countryCode",
+                          JSON.stringify(...result)
+                        );
+                        setChosenCountryCode(...result);
+                        countryRef.current.value = "";
+                        setPhoneNumber("");
+                        emptyCountryInput(countryRef);
+                        codeRef.current.focus();
+                      }}
+                    >
+                      <div className="mm-phone-country">
+                        <img
+                          src={`data:image/jpeg;base64,${item.image}`}
+                          alt={`${item.isocode} Flag`}
+                        />
+                        <span>{item.isocode}</span>
+                      </div>
+                      <span className="mm-phone__digit">{`+${item.code}`}</span>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
-            <ul className="mm-phone-country__codes">
-              {phoneCodeList.map((item) => {
-                return (
-                  <li
-                    data-ccode={item.ccode}
-                    data-code={item.code}
-                    data-country={item.country}
-                    data-placeholder={item.example}
-                    data-img={`data:image/jpeg;base64,${item.image}`}
-                    data-regex={item.regex}
-                    data-code-length={item.length}
-                    className={item.isActive ? "active" : ""}
-                    key={Math.random()}
-                    onClick={(e) => {
-                      const attr = e.currentTarget.getAttribute("data-code");
-                      const result = staticPhoneCodeList.filter((item) => {
-                        return item.code == attr;
-                      });
-                      localStorage.setItem(
-                        "MM.countryCode",
-                        JSON.stringify(...result)
-                      );
-                      // activatedCode(phoneCodeList, attr);
-                      setChosenCountryCode(...result);
-                      countryRef.current.value = "";
-                      setPhoneNumber("");
-                      emptyCountryInput(countryRef);
-                    }}
-                  >
-                    <div className="mm-phone-country">
-                      <img
-                        src={`data:image/jpeg;base64,${item.image}`}
-                        alt={`${item.isocode} Flag`}
-                      />
-                      <span>{item.isocode}</span>
-                    </div>
-                    <span className="mm-phone__digit">{`+${item.code}`}</span>
-                  </li>
-                );
-              })}
-            </ul>
           </div>
         </div>
         <div className="mm-phone-input">
           <input
             value={phoneNumber}
+            ref={codeRef}
             onInput={(e) => {
               let curr = e.target.value;
               curr = curr.replaceAll(/\D/g, "");
@@ -262,7 +250,15 @@ function PhoneInput() {
               const debounceText = optimizedFn(curr);
               setPhoneNumber(result);
             }}
+            onFocus={(e) => {
+              // console.log("test");
+              setFocusedInput(true);
+            }}
             placeholder={chosenCountryCode.example}
+            onBlur={(e) => {
+              checkingCode(e.target.value.replace(/\s/g, ""));
+              setFocusedInput(false);
+            }}
           />
         </div>
         <div className="mm-choose-lang">

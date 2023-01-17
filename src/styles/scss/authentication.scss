@@ -182,6 +182,7 @@ main {
               padding: 8px;
               border-radius: 10px;
               position: relative;
+              background-color: var(--lang-drop);
               .mm-phone-code {
                 color: var(--cl-26);
                 font-family: var(--firagoMedium);
@@ -192,17 +193,35 @@ main {
                 width: 24px;
               }
               .mm-phone-drop {
-                background-color: var(--lang-drop);
                 position: absolute;
                 left: -6px;
                 top: calc(100% + 10px);
-                padding: 16px;
+                // padding: 16px;
                 z-index: 9;
                 max-width: 271px;
-                border-radius: 12px;
                 display: none;
                 flex-direction: column;
                 gap: 8px;
+                &::after {
+                  content: "";
+                  display: block;
+                  width: calc(100% - 24px);
+                  height: calc(100% - 24px);
+                  position: absolute;
+                  bottom: 8px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  box-shadow: var(--box-shadow);
+                  border-radius: 10px;
+                  z-index: -1;
+                }
+                > div {
+                  background-color: var(--lang-drop);
+                  padding: 16px;
+                  position: relative;
+                  z-index: 1;
+                  border-radius: 12px;
+                }
                 .mm-phone-search {
                   background-color: var(--lang-sr-bg);
                   border-radius: 12px;
@@ -210,6 +229,7 @@ main {
                   gap: 8px;
                   padding: 12px;
                   align-items: center;
+                  margin-bottom: 8px;
                   input {
                     flex-grow: 1;
                     color: var(--sr-icon-stroke);
@@ -296,9 +316,10 @@ main {
             }
           }
           label.error {
-            border-color: var(--cl-red);
+            border-color: var(--cl-red) !important;
           }
-          label.focused {
+          label.focused,
+          .labeled-div.focused {
             border-color: var(--cl-blue);
           }
           .mm-phone-fill {

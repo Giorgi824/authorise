@@ -17,6 +17,7 @@ import axios from "axios";
 import SearchSvg from "../../../svges/SearchSvg";
 import PhoneInput from "../../LegalEntity/UI/PhoneInput";
 const Authentication = () => {
+  const [trs, setTrs] = useState(false);
   const [mode, setMode] = useState(null);
   const getCurrentTheme = () => {
     let theme = window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -160,8 +161,21 @@ const Authentication = () => {
             <form>
               <PhoneInput />
               <div className="mm-password">
-                <div className="labeled-div">
-                  <input type="password" placeholder="პაროლი" />
+                <div
+                  className={`labeled-div ${
+                    trs ? "bg-transparent focused" : ""
+                  }`}
+                >
+                  <input
+                    type="password"
+                    placeholder="პაროლი"
+                    onFocus={(e) => {
+                      setTrs(true);
+                    }}
+                    onBlur={(e) => {
+                      setTrs(false);
+                    }}
+                  />
                 </div>
               </div>
               <div className="mm-forget-password">
