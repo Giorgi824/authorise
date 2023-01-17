@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import BlankSpace from "../../PlainFunctions/BlankAfterThree";
 import ArrowSvg from "../../../svges/ArrowSvg";
 import SearchSvg from "../../../svges/SearchSvg";
@@ -14,12 +14,43 @@ function PhoneInput() {
   const [staticPhoneCodeList, setStaticPhoneCodeList] = useState();
   const [chosenCountryCode, setChosenCountryCode] = useState({});
   const [active, setActive] = useState(false);
+  const [debounceCode, setDebounceCode] = useState("");
+  const [errorDrop, setErrorDrop] = useState(true);
   if (!localStorage.getItem("MM.countryCode")) {
     console.log(12);
   }
 
   // Debounce
+  // const updateDebounceText = debounce((text) => {
+  //   // console.log(text);
+  // });
+  // function debounce(cb, delay = 1000) {
+  //   let timer;
+  //   return (...args) => {
+  //     if (timer) {
+  //       clearTimeout(timer);
+  //     }
+  //     timer = setTimeout(() => {
+  //       cb(...args);
+  //       console.log(args);
+  //     }, delay);
+  //   };
+  // }
+  const handleChange = (result) => setDebounceCode(result);
+  const debounce = (func) => {
+    let timer;
+    return function (...args) {
+      const context = this;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        timer = null;
+        func.apply(context, args);
+      }, 1500);
+    };
+  };
+  // end of debounce function
 
+  const optimizedFn = useCallback(debounce(handleChange), []);
   function activatedCode(country, attr) {
     phoneCodeList.map((country) => {
       country.code === attr
@@ -46,16 +77,41 @@ function PhoneInput() {
       }
     });
   }, []);
+
+  //regex funcs
+  function regexed(regex, input) {
+    let regEx = new RegExp(`^(${regex})$`, "g");
+
+    return regEx.test(input);
+  }
+
+  // debounce useeffect
+  useEffect(() => {
+    // console.log(debounceCode, chosenCountryCode);
+    const currRegex = chosenCountryCode.regex;
+    const currInput = debounceCode;
+    const result = regexed(currRegex, currInput);
+    console.log(currInput.trim().length);
+    if (currInput.trim().length !== 0) {
+      setErrorDrop(result);
+    } else if (currInput.trim().length == 0) {
+      setErrorDrop(true);
+    }
+  }, [debounceCode]);
+
   const getFormatedDate = () => {
     const date = new Date();
     const monthCompare = date.getMonth() + 1;
     const minuteCompare = date.getMinutes();
+    const hourCompare = date.getHours();
+    const secondCompare = date.getSeconds();
+    const dayCompare = date.getDate();
     const year = date.getFullYear();
     const month = monthCompare < 10 ? `0${monthCompare}` : monthCompare;
-    const day = date.getDate();
-    const hours = date.getHours();
+    const day = dayCompare < 10 ? `0${dayCompare}` : dayCompare;
+    const hours = hourCompare < 10 ? `0${hourCompare}` : hourCompare;
     const minutes = minuteCompare < 10 ? `0${minuteCompare}` : minuteCompare;
-    const seconds = date.getSeconds();
+    const seconds = secondCompare < 10 ? `0${secondCompare}` : secondCompare;
     return (
       year +
       "-" +
@@ -107,7 +163,7 @@ function PhoneInput() {
   return (
     <div className="mm-phone-fill">
       <label
-        className="error labeled-div"
+        className={`labeled-div ${errorDrop ? "" : "error"}`}
         onClick={(e) => {
           e.preventDefault();
         }}
@@ -147,13 +203,6 @@ function PhoneInput() {
                 ref={countryRef}
                 onChange={(e) => {
                   emptyCountryInput(countryRef);
-                  // const curr = e.currentTarget.value;
-                  // const filteredCountry = staticPhoneCodeList.filter(
-                  //   (item, idx) => {
-                  //     return item.isocode.toLowerCase().includes(curr);
-                  //   }
-                  // );
-                  // setPhoneCodeList(filteredCountry);
                 }}
               />
             </div>
@@ -210,7 +259,7 @@ function PhoneInput() {
               if (curr.split("").length > chosenCountryCode.length) {
                 return false;
               }
-              processChange();
+              const debounceText = optimizedFn(curr);
               setPhoneNumber(result);
             }}
             placeholder={chosenCountryCode.example}
@@ -220,7 +269,7 @@ function PhoneInput() {
           <div></div>
         </div>
       </label>
-      <div className="mm-phone-error">
+      <div className={`mm-phone-error ${errorDrop ? "" : "active"}`}>
         <div className="mm-phone-error__text">
           <img src={exclimationSvg} alt="warning sign icon" />
           <span>ტელ.ნომერის ფორმატი არასწორია</span>

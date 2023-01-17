@@ -384,6 +384,7 @@ main {
 }
 .mm-phone-error {
   cursor: pointer;
+  display: none;
   > div {
     display: inline-flex;
     gap: 8px;
@@ -395,6 +396,9 @@ main {
     line-height: 24px;
     position: relative;
   }
+}
+.mm-phone-error.active {
+  display: block;
 }
 .both-error {
   background-color: var(--bg-warning);
