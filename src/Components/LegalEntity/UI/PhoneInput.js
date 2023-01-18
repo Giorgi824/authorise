@@ -4,7 +4,7 @@ import ArrowSvg from "../../../svges/ArrowSvg";
 import SearchSvg from "../../../svges/SearchSvg";
 import exclimationSvg from "../../../img/exclimation.svg";
 import axios from "axios";
-function PhoneInput() {
+function PhoneInput({ onCodeInput }) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneToggle, setPhoneToggle] = useState(false);
   const [phoneCodeList, setPhoneCodeList] = useState([]);
@@ -247,6 +247,11 @@ function PhoneInput() {
               if (curr.split("").length > chosenCountryCode.length) {
                 return false;
               }
+              onCodeInput(
+                curr,
+                chosenCountryCode.regex,
+                chosenCountryCode.code
+              );
               const debounceText = optimizedFn(curr);
               setPhoneNumber(result);
             }}

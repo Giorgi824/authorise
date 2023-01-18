@@ -373,7 +373,11 @@ main {
     }
   }
 }
-
+.mp-registration {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
 // tooltip for inputs
 .tooltip {
   position: absolute;

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { sha256, sha512 } from "crypto-hash";
+// import { JSEncrypt } from "jsencrypt";
 import "../../../styles/css/authentication.css";
 import "../../../styles/css/languageStyle.css";
 import AuthoriseLogoLight from "../../../svges/AuthoriseLogoLight";
@@ -19,6 +21,11 @@ import PhoneInput from "../../LegalEntity/UI/PhoneInput";
 const Authentication = () => {
   const [trs, setTrs] = useState(false);
   const [mode, setMode] = useState(null);
+  const [disabledBtn, setDisabledBtn] = useState(false);
+  const [countryInputCode, setChosenCountryCode] = useState([]);
+  const [countriesCode, setCountriesCode] = useState(false);
+  const [psw, setPsw] = useState("");
+  const [numberCt, setNumberCt] = useState("");
   const getCurrentTheme = () => {
     let theme = window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
@@ -28,6 +35,77 @@ const Authentication = () => {
       : null;
     return theme;
   };
+  const handleTextInput = (val, algorithm) => {
+    // Get the value
+    let value = val;
+
+    let result = "";
+
+    // Get the current active algorithm and hash the value using it.
+    if (algorithm == "sha256") {
+      result = sha256(value);
+    } else if (algorithm == "sha512") {
+      result = sha512(value);
+    }
+    console.log(result);
+    return result;
+  };
+  const test2 = (psw, username) => {
+    const obj = {
+      type: "login",
+      username,
+      platform: "web",
+      hash: "",
+      hash2: "",
+    };
+    const shaPassword = handleTextInput(psw, "sha512");
+    const shaDate = handleTextInput("2021-04-28 09:15:52", "sha512");
+    obj.hash = handleTextInput(`${shaPassword}${shaDate}`, "sha512");
+    const shaPassword2 = handleTextInput(psw, "sha256");
+    const shaDate2 = handleTextInput("2021-04-28 09:15:52", "sha256");
+    obj.hash2 = handleTextInput(`${shaPassword2}${shaDate2}`, "sha256");
+    Promise.all([obj.hash2, obj.hash]).then((values) => {
+      console.log(values);
+    });
+    const publicKey = ` -----BEGIN PUBLIC KEY-----
+    MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEApBPNy2D9usnRVw7J+gMY dY71/Nh4LZe5j9Fy10igk7Aw+J++UPL+Fs5LAJAvBUr6PfHqL+Dz9LydOHaQ3hA1 Hph5ndAglZ1jqf9JBAxoy7H6w/+eocuH1/TIEz6OySHrl0oDCbN83JNQXXjWaMkr 2ibZ+567c2MprvWUVBvpmXlUA1QwQ9V1NXPVRRkO2YX/1HwyB3PmHdILKL+L047c 9aorYJf3+eqLiysU47gkQ6NNSF/+YhkN1Phe2l8NLYWfoB0kYNxBS+qwlMmidhS4 JK1VyxQC1y/uEBnrLWaAmXIK1EUTkxbyb46ibldVIxF1NjzWb7LtxA4hqQ/6tWm6 juZHU3QFWzeh2Kc9qPlHcaO1dzS1OLE76dDYHaGkUqycH8fFEywM0waVopb+HS9W VqT27BLu8MO7o3Dd2TtvOFQFPrrWNqu41IowjC52bTmmm5bF/bS5+H/t0ngadX7k //0pqKQuL127wlk0wjNl9zNLSTliJg7YwtYbOMyUV6LJXTTy+SMraY4EGWFg7M1H r7xAAKGjoCV2jXewbyjl9b84n/bWq7D9BFWJWD6YCFn0+SjgHZZawwQOYgEWlhXe 43o+SfwaSElrbFWj4zET1B5qzarrGihkIJ3EWwbucFkMToMpakbrbWUPiAIBAn8L qHjI8ffZhqJrM/VKUtSV8PECAwEAAQ==
+    -----END PUBLIC KEY----- `;
+    // const encrypt = new JSEncrypt();
+    // encrypt.setPublicKey(publicKey);
+    // const encrypted = encrypt.encrypt(obj);
+    // console.log(encrypted);
+    // return encrypted;
+    // return obj;
+  };
+  const sendAuthorise = async (e) => {
+    e.preventDefault();
+    try {
+      const finalResult = test2(psw, `${countryInputCode.at(-1)}${numberCt}`);
+      const { hash, hash2 } = finalResult;
+      // console.log(hash, hash2);
+      return;
+      const res = await axios.post(
+        "https://dev-api.mp.ge/authentication/login",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            soft: "mp_web_app",
+            softVersion: "3.0.0",
+            requestDate: "2021-04-28 09:15:52",
+            language: "GE",
+          },
+          data: {
+            encryption: test2(),
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const res = getCurrentTheme();
     loadTheme(res);
@@ -42,7 +120,29 @@ const Authentication = () => {
     localStorage.setItem("MM.theme", currClass);
     loadTheme(currClass);
   };
-
+  const checkInputFillment = (...args) => {
+    setChosenCountryCode(args);
+  };
+  //regex funcs
+  function regexed(regex, input) {
+    if (input) {
+      let regEx = new RegExp(`^(${regex})$`, "g");
+      return regEx.test(input);
+    } else {
+      return false;
+    }
+  }
+  useEffect(() => {
+    const [numberCode, regex] = countryInputCode;
+    const result = regexed(regex, numberCode);
+    setCountriesCode(result);
+    setNumberCt(numberCode);
+    if (result && psw) {
+      setDisabledBtn(true);
+    } else {
+      setDisabledBtn(false);
+    }
+  }, [countryInputCode, psw]);
   return (
     <main className="mm-authenticate">
       <aside>
@@ -159,7 +259,7 @@ const Authentication = () => {
             <h1>ავტორიზაცია</h1>
             <span>შეუზღუდავი ონლაინ შესაძლებლობები</span>
             <form>
-              <PhoneInput />
+              <PhoneInput onCodeInput={checkInputFillment} />
               <div className="mm-password">
                 <div
                   className={`labeled-div ${
@@ -169,6 +269,10 @@ const Authentication = () => {
                   <input
                     type="password"
                     placeholder="პაროლი"
+                    value={psw}
+                    onInput={(e) => {
+                      setPsw(e.currentTarget.value);
+                    }}
                     onFocus={(e) => {
                       setTrs(true);
                     }}
@@ -193,7 +297,12 @@ const Authentication = () => {
                   </div>
                 </div>
               </div>
-              <button disabled>შესვლა</button>
+              <button
+                disabled={disabledBtn ? false : true}
+                onClick={sendAuthorise}
+              >
+                შესვლა
+              </button>
             </form>
             <p>
               ეს საიტი დაცულია MM.ge-ით და Google-ის კონფიდენციალურობის
