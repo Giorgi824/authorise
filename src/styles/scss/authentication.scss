@@ -123,10 +123,12 @@ main {
           font-family: var(--firagoMedium);
         }
         > form {
-          margin-top: 40px;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
+          > div {
+            margin-top: 40px;
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+          }
           input[type="number"] {
             -webkit-appearance: none;
             -moz-appearance: textfield;
@@ -164,13 +166,162 @@ main {
               outline: none;
             }
           }
+          .mm-code-input {
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+          }
+          .mm-code-input.active {
+            display: flex;
+          }
+          .mm-code-tryout {
+            display: none;
+            > div {
+              display: flex;
+              flex-direction: column;
+              gap: 16px;
+            }
+            .mm-no-timer {
+              > span {
+                font-size: 14px;
+                line-height: 24px;
+                font-family: var(--firagoMedium);
+                color: var(--sr-icon-stroke);
+              }
+            }
+          }
+          .mm-code-tryout.active {
+            display: block;
+          }
+          .authorised {
+            gap: 24px;
+            display: none;
+            .labeled-div {
+              justify-content: space-between;
+              padding: 0 16px;
+              border: none;
+              background-color: var(--br-name-rised);
+              span {
+                color: var(--cl-26);
+                font-family: var(--firagoMedium);
+              }
+              svg {
+                cursor: pointer;
+                path {
+                  stroke: var(--cl-26);
+                }
+              }
+            }
+            .user-txt {
+              color: var(--cl-84);
+              font-family: var(--firagoMedium);
+              font-size: 14px;
+              line-height: 24px;
+              span {
+                color: var(--cl-26);
+                font-family: var(--firagoBold);
+                margin: 0 5px;
+              }
+            }
+            .digit-texts {
+              display: flex;
+              flex-direction: column;
+              gap: 16px;
+              > span {
+                align-self: flex-end;
+                font-size: 14px;
+                font-family: var(--firagoMedium);
+                line-height: 20px;
+                display: none;
+                color: var(--cl-red);
+              }
+              > span.active {
+                display: inline-block;
+              }
+            }
+            .otp-input {
+              > div {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 16px;
+              }
+              input {
+                height: 64px;
+                max-width: 54px;
+                width: 54px !important;
+                display: block;
+                border-radius: 12px;
+                font-size: 32px;
+                color: var(--cl-26);
+                background-color: var(--lang-sr-bg);
+                text-align: center;
+                border: 2px solid transparent;
+                padding: 12px;
+                &:focus {
+                  border-color: var(--cl-blue);
+                  background-color: transparent;
+                }
+              }
+              input.reddish {
+                border-color: var(--cl-red) !important;
+              }
+            }
+
+            .mm-resend-digits {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 10px;
+              > div {
+                font-size: 14px;
+                color: var(--cl-26);
+                font-family: var(--firagoBold);
+                line-height: 24px;
+                display: inline-flex;
+                align-items: center;
+                gap: 3px;
+              }
+              > small {
+                color: var(--sr-icon-stroke);
+                font-size: 14px;
+                line-height: 24px;
+                font-family: var(--firagoMedium);
+              }
+              > p {
+                font-size: 12px;
+                line-height: 20px;
+                color: var(--cl-26);
+                font-family: var(--firagoMedium);
+              }
+              > span {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                color: var(--cl-blue);
+                font-size: 14px;
+                font-family: var(--firagoMedium);
+                svg {
+                  max-width: 16px;
+                  path {
+                    stroke: var(--cl-blue);
+                  }
+                }
+              }
+            }
+          }
+          .authorised.active {
+            display: flex;
+          }
           .labeled-div {
             display: flex;
             align-items: center;
             // gap: 16px;
             padding: 4px;
             border-radius: 12px;
-            background-color: var(--bg-mode);
+            // background-color: var(--bg-mode);
             border: 2px solid var(--bg-mode);
             height: 48px;
             .mm-phone-chosen {
@@ -315,7 +466,8 @@ main {
               overflow: hidden;
             }
           }
-          label.error {
+          label.error,
+          .labeled-div.error {
             border-color: var(--cl-red) !important;
           }
           label.focused,
@@ -337,7 +489,7 @@ main {
               color: var(--cl-26);
             }
           }
-          > button {
+          button:not(.mm-phone-search button) {
             padding: 16px 20px;
             border-radius: 12px;
             color: #fff;
@@ -362,12 +514,16 @@ main {
             }
           }
         }
-        > p {
+        .mm-txt {
           color: var(--cl-84);
           font-size: 12px;
           font-family: var(--firagoMedium);
           line-height: 20px;
           margin-top: 32px;
+          display: none;
+        }
+        .mm-txt.active {
+          display: block;
         }
       }
     }
@@ -376,7 +532,7 @@ main {
 .mp-registration {
   display: inline-flex;
   flex-wrap: wrap;
-  gap: 7px;
+  gap: 5px;
 }
 // tooltip for inputs
 .tooltip {
@@ -434,4 +590,10 @@ main {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+}
+.authorising {
+  display: none;
+}
+.authorising.active {
+  display: flex;
 }
