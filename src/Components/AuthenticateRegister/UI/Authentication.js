@@ -22,6 +22,7 @@ import axios from "axios";
 import SearchSvg from "../../../svges/SearchSvg";
 import PhoneInput from "../../LegalEntity/UI/PhoneInput";
 import BlankSpace from "../../PlainFunctions/BlankAfterThree";
+
 const Authentication = () => {
   // dublicated function
   const getFormatedDate = () => {
@@ -65,15 +66,51 @@ const Authentication = () => {
   const [tryContainer, setTryContainer] = useState(true);
   const [sendFourDigitBtn, setSendFourDigitBtn] = useState(false);
   const [validDigit, setValidDigit] = useState(true);
+  const [operationId, setOperationId] = useState("");
+  const [pincode, setPincode] = useState(null);
+  const [crDate, setCrDate] = useState("");
+  const [leftChance, setLeftChance] = useState(null);
+  const [timing, setTiming] = useState(null);
+  const [expiration, setExpiration] = useState(false);
+  //OTP
   function handleChange(OTP) {
     setOTP(OTP);
     const lg = OTP.length;
     if (lg == 4) {
       setSendFourDigitBtn(true);
+      setPincode(OTP);
     } else {
       setSendFourDigitBtn(false);
     }
+    if (lg == 0) {
+      // setValidDigit(true);
+    }
   }
+  // End of OTP
+  // timer
+  const [seconds, setSeconds] = useState(null);
+  const [isActive, setIsActive] = useState(false);
+
+  function toggle() {
+    setIsActive(!isActive);
+  }
+  function reset() {
+    setSeconds(0);
+    setIsActive(false);
+  }
+  function timerss(minute, second) {}
+  useEffect(() => {
+    let interval = null;
+    if (isActive) {
+      interval = setInterval(() => {
+        setSeconds((seconds) => seconds - 1);
+      }, 1000);
+    } else if (!isActive && seconds !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, seconds]);
+  // end of timer
   const getCurrentTheme = () => {
     let theme = window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
@@ -102,11 +139,47 @@ const Authentication = () => {
   function passwordNameValid(cl) {
     return checkPasswordName ? "" : cl;
   }
+  // encryption function
+  function encryptFunc(key, objNm) {
+    const encrypt = new JSEncrypt();
+    encrypt.setPublicKey(key);
+    const encrypted = encrypt.encrypt(JSON.stringify(objNm));
+    return encrypted;
+  }
+
+  async function shaForAuthorise(sha, username, time, psw) {
+    const shaUsername = await handleTextInput(username, sha);
+    const shaDate = await handleTextInput(time, sha);
+    const shaPsw = await handleTextInput(psw, sha);
+    const results = `${shaPsw}${shaUsername}${shaDate}`;
+    return results;
+  }
+  async function shaDigitAuthorise(
+    sha,
+    psw,
+    pincode,
+    countryInputCode,
+    numberCt,
+    secretKey,
+    currentDate
+  ) {
+    const hashedPsw = await handleTextInput(psw, sha);
+    const hashedPinPhoneSecret = await handleTextInput(
+      `${pincode}${countryInputCode.at(-1)}${numberCt}${secretKey}`,
+      sha
+    );
+    console.log(`${pincode}${countryInputCode.at(-1)}${numberCt}${secretKey}`);
+    const hashedDate = await handleTextInput(currentDate, sha);
+    const arrConcat = `${hashedPsw}${hashedPinPhoneSecret}${hashedDate}`;
+    const hashedConcat = await handleTextInput(arrConcat, sha);
+    return hashedConcat;
+  }
 
   const publicKey = ` -----BEGIN PUBLIC KEY-----
     MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEApBPNy2D9usnRVw7J+gMY dY71/Nh4LZe5j9Fy10igk7Aw+J++UPL+Fs5LAJAvBUr6PfHqL+Dz9LydOHaQ3hA1 Hph5ndAglZ1jqf9JBAxoy7H6w/+eocuH1/TIEz6OySHrl0oDCbN83JNQXXjWaMkr 2ibZ+567c2MprvWUVBvpmXlUA1QwQ9V1NXPVRRkO2YX/1HwyB3PmHdILKL+L047c 9aorYJf3+eqLiysU47gkQ6NNSF/+YhkN1Phe2l8NLYWfoB0kYNxBS+qwlMmidhS4 JK1VyxQC1y/uEBnrLWaAmXIK1EUTkxbyb46ibldVIxF1NjzWb7LtxA4hqQ/6tWm6 juZHU3QFWzeh2Kc9qPlHcaO1dzS1OLE76dDYHaGkUqycH8fFEywM0waVopb+HS9W VqT27BLu8MO7o3Dd2TtvOFQFPrrWNqu41IowjC52bTmmm5bF/bS5+H/t0ngadX7k //0pqKQuL127wlk0wjNl9zNLSTliJg7YwtYbOMyUV6LJXTTy+SMraY4EGWFg7M1H r7xAAKGjoCV2jXewbyjl9b84n/bWq7D9BFWJWD6YCFn0+SjgHZZawwQOYgEWlhXe 43o+SfwaSElrbFWj4zET1B5qzarrGihkIJ3EWwbucFkMToMpakbrbWUPiAIBAn8L qHjI8ffZhqJrM/VKUtSV8PECAwEAAQ==
     -----END PUBLIC KEY----- `;
-  const test2 = async (psw, username, time) => {
+  const secretKey = "d31315ea127832d4c22d16a26f53b39ff1b723cac75cd327fe4f4448";
+  const beforeAuthorise = async (psw, username, time) => {
     const obj = {
       type: "login",
       username,
@@ -114,37 +187,89 @@ const Authentication = () => {
       hash: "",
       hash2: "",
     };
-    const shaUsername = await handleTextInput(username, "sha512");
-    const shaDate = await handleTextInput(time, "sha512");
-    const shaPsw = await handleTextInput(psw, "sha512");
-    obj.hash = await handleTextInput(
-      `${shaPsw}${shaUsername}${shaDate}`,
-      "sha512"
-    );
-    const shaUsername2 = await handleTextInput(psw, "sha256");
-    const shaDate2 = await handleTextInput(time, "sha256");
-    const shaPsw2 = await handleTextInput(psw, "sha256");
-    obj.hash2 = await handleTextInput(
-      `${shaPsw2}${shaUsername2}${shaDate2}`,
-      "sha256"
-    );
+    const auth1 = await shaForAuthorise("sha512", username, time, psw);
+    obj.hash = await handleTextInput(auth1, "sha512");
+    const auth2 = await shaForAuthorise("sha256", username, time, psw);
+    obj.hash2 = await handleTextInput(auth2, "sha256");
 
     return obj;
+  };
+  const afterSendingDigit = async () => {
+    const currentDate = crDate;
+    const allHashed = await shaDigitAuthorise(
+      "sha512",
+      psw,
+      pincode,
+      countryInputCode,
+      numberCt,
+      secretKey,
+      currentDate
+    );
+    const allHashed2 = await shaDigitAuthorise(
+      "sha256",
+      psw,
+      pincode,
+      countryInputCode,
+      numberCt,
+      secretKey,
+      currentDate
+    );
+    const afterObj = {
+      type: "finishLogin",
+      username: `${countryInputCode.at(-1)}${numberCt}`,
+      operation_id: `${operationId}`,
+      hash: allHashed,
+      hash2: allHashed2,
+      system: "web",
+      client: "dev-api.mp.ge",
+      platform: "web",
+      platform_version: "10.0",
+      brand: "chrome",
+      model: "2",
+      mp_version: "2.0",
+    };
+    const encryptedObject = encryptFunc(publicKey, afterObj);
+    const res = await axios.post(
+      "https://dev-api.mp.ge/authentication/login",
+      { encryption: encryptedObject },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          soft: "mp_web_app",
+          softVersion: "3.0.0",
+          language: "GE",
+          requestDate: currentDate,
+        },
+      }
+    );
+    // const { errorCode } = res.data;
+    const { errorMessage } = res.data;
+    const lastDigit = +errorMessage.at(-1);
+    console.log(res);
+    if (lastDigit) setLeftChance(lastDigit);
+    else {
+      setTryContainer(false);
+      // setExpiration(true);
+      setSeconds(timing);
+      setIsActive(true);
+    }
   };
   const sendAuthorise = async (e) => {
     const currentTime = getFormatedDate();
     try {
-      const finalResult = await test2(
+      const finalResult = await beforeAuthorise(
         psw,
         `${countryInputCode.at(-1)}${numberCt}`,
         currentTime
       );
-      const encrypt = new JSEncrypt();
-      encrypt.setPublicKey(publicKey);
-      const encrypted = encrypt.encrypt(JSON.stringify(finalResult));
+      // const encrypt = new JSEncrypt();
+      // encrypt.setPublicKey(publicKey);
+      // const encrypted = encrypt.encrypt(JSON.stringify(finalResult));
+      const encryptedObject = encryptFunc(publicKey, finalResult);
       const res = await axios.post(
         "https://dev-api.mp.ge/authentication/login",
-        { encryption: encrypted },
+        { encryption: encryptedObject },
         {
           headers: {
             Accept: "application/json",
@@ -157,8 +282,24 @@ const Authentication = () => {
         }
       );
       const { errorCode } = res.data;
-      console.log(errorCode);
-      setCheckPasswordName(errorCode == 0 ? true : false);
+      const { expire } = res.data.data;
+
+      // console.log(res.data.data.operation_id);
+      const errorCodeCheck = errorCode === 0 ? true : false;
+      if (errorCodeCheck) {
+        setOperationId(res.data.data.operation_id);
+        setCrDate(currentTime);
+        setTiming(expire);
+      }
+      setCheckPasswordName(errorCodeCheck);
+      setAuthContainer(errorCodeCheck);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const shemdegiBtn = async (e) => {
+    const currentTime = getFormatedDate();
+    try {
     } catch (error) {
       console.log(error);
     }
@@ -384,7 +525,7 @@ const Authentication = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     sendAuthorise();
-                    setAuthContainer(true);
+                    // setAuthContainer(!checkPasswordName);
                   }}
                 >
                   შესვლა
@@ -395,13 +536,23 @@ const Authentication = () => {
                   <span className="entered-phone">
                     {numberCt ? BlankSpace(numberCt) : ""}
                   </span>
-                  <ExitSvg />
+                  <small
+                    onClick={() => {
+                      alert(12);
+                    }}
+                  >
+                    <ExitSvg />
+                  </small>
                 </div>
                 <div
                   className={`mm-code-tryout ${tryContainer ? "" : "active"}`}
                 >
                   <div className="mm-timer">
-                    <div className={`mm-phone-error both-error`}>
+                    <div
+                      className={`mm-phone-error both-error ${
+                        expiration ? "" : "active"
+                      }`}
+                    >
                       <div className="mm-phone-error__text">
                         <img src={exclimationSvg} alt="warning sign icon" />
                         <span>მცდელობების რაოდენობა ამოიწურა</span>
@@ -414,14 +565,16 @@ const Authentication = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="mm-resend-digits">
+                    <div
+                      className={`mm-resend-digits ${
+                        expiration ? "" : "active"
+                      }`}
+                    >
                       <small>კოდის მოთხოვნა შესაძლებელია</small>
-                      <div>
-                        2<span>:</span>56
-                      </div>
+                      <div>{seconds}</div>
                     </div>
                   </div>
-                  <div className="mm-no-timer">
+                  <div className={`mm-no-timer ${expiration ? "active" : ""}`}>
                     <span>ლოდინის დრო გავიდა</span>
                     <button>მოითხოვე კოდი</button>
                   </div>
@@ -436,14 +589,13 @@ const Authentication = () => {
                   </div>
                   <div className="digit-texts">
                     <span className={`${validDigit ? "" : "active"}`}>
-                      დარჩა 2 მცდელობა
+                      დარჩა {leftChance} მცდელობა
                     </span>
-                    <div className="otp-input">
+                    <div className={`otp-input ${validDigit ? "" : "reddish"}`}>
                       <OtpInput
                         onChange={handleChange}
                         value={OTP}
                         numInputs={4}
-                        className={`${validDigit ? "" : "reddish"}`}
                       />
                     </div>
                   </div>
@@ -464,7 +616,11 @@ const Authentication = () => {
                   </div>
                   <button
                     disabled={sendFourDigitBtn ? false : true}
-                    onClick={() => {}}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setValidDigit(false);
+                      afterSendingDigit();
+                    }}
                   >
                     შემდეგი
                   </button>

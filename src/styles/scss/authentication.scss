@@ -182,12 +182,16 @@ main {
               gap: 16px;
             }
             .mm-no-timer {
+              display: none;
               > span {
                 font-size: 14px;
                 line-height: 24px;
                 font-family: var(--firagoMedium);
                 color: var(--sr-icon-stroke);
               }
+            }
+            .mm-no-timer.active {
+              display: flex;
             }
           }
           .mm-code-tryout.active {
@@ -263,8 +267,11 @@ main {
                   background-color: transparent;
                 }
               }
-              input.reddish {
-                border-color: var(--cl-red) !important;
+            }
+            .otp-input.reddish {
+              input {
+                background-color: transparent !important;
+                border-color: var(--cl-red);
               }
             }
 
