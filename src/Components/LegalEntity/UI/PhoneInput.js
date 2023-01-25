@@ -4,7 +4,7 @@ import ArrowSvg from "../../../svges/ArrowSvg";
 import SearchSvg from "../../../svges/SearchSvg";
 import exclimationSvg from "../../../img/exclimation.svg";
 import axios from "axios";
-function PhoneInput({ onCodeInput, checkingFc }) {
+function PhoneInput({ onCodeInput, checkingFc, chPswLg, errorFunc }) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneToggle, setPhoneToggle] = useState(false);
   const [phoneCodeList, setPhoneCodeList] = useState([]);
@@ -74,6 +74,15 @@ function PhoneInput({ onCodeInput, checkingFc }) {
       setErrorDrop(true);
     }
   }
+
+  // function removeErrorClass() {
+  //   document
+  //     .querySelectorAll(".labeled-div")
+  //     .forEach((item) => item.classList.remove("error"));
+  //   document
+  //     .querySelector(".mm-phone-error.both-error.active")
+  //     .classList.remove("active");
+  // }
 
   // debounce useeffect
   useEffect(() => {
@@ -254,6 +263,10 @@ function PhoneInput({ onCodeInput, checkingFc }) {
               );
               const debounceText = optimizedFn(curr);
               setPhoneNumber(result);
+              if (chPswLg.trim().length == 0 && e.target.value == "") {
+                errorFunc(true);
+              }
+              // console.log(chPswLg);
             }}
             onFocus={(e) => {
               // console.log("test");

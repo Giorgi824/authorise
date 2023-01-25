@@ -276,7 +276,7 @@ main {
             }
 
             .mm-resend-digits {
-              display: flex;
+              display: none;
               justify-content: space-between;
               align-items: center;
               flex-wrap: wrap;
@@ -317,6 +317,9 @@ main {
                   }
                 }
               }
+            }
+            .mm-resend-digits.active {
+              display: flex;
             }
           }
           .authorised.active {

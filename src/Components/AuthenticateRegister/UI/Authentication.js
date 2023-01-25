@@ -72,6 +72,8 @@ const Authentication = () => {
   const [leftChance, setLeftChance] = useState(null);
   const [timing, setTiming] = useState(null);
   const [expiration, setExpiration] = useState(false);
+  const [remainMinute, setRemainMinute] = useState("");
+  const [remainSecond, setRemainSecond] = useState("");
   //OTP
   function handleChange(OTP) {
     setOTP(OTP);
@@ -98,15 +100,28 @@ const Authentication = () => {
     setSeconds(0);
     setIsActive(false);
   }
-  function timerss(minute, second) {}
+  function timerss(second) {
+    const minute = seconds % 60;
+  }
   useEffect(() => {
     let interval = null;
     if (isActive) {
+      setExpiration(false);
       interval = setInterval(() => {
         setSeconds((seconds) => seconds - 1);
+        if (seconds > 0) {
+          let remaind = Number(seconds % 60);
+          const second = remaind < 10 ? (remaind = `0${remaind}`) : remaind;
+          const minute = Math.floor(seconds / 60);
+          setRemainMinute(minute);
+          setRemainSecond(second);
+        } else {
+          setIsActive(false);
+        }
       }, 1000);
     } else if (!isActive && seconds !== 0) {
       clearInterval(interval);
+      setExpiration(true);
     }
     return () => clearInterval(interval);
   }, [isActive, seconds]);
@@ -146,6 +161,8 @@ const Authentication = () => {
     const encrypted = encrypt.encrypt(JSON.stringify(objNm));
     return encrypted;
   }
+
+  // function for recieving phone input value and cleaning it
 
   async function shaForAuthorise(sha, username, time, psw) {
     const shaUsername = await handleTextInput(username, sha);
@@ -246,13 +263,19 @@ const Authentication = () => {
     // const { errorCode } = res.data;
     const { errorMessage } = res.data;
     const lastDigit = +errorMessage.at(-1);
+    const digitNm = Number(lastDigit);
     console.log(res);
-    if (lastDigit) setLeftChance(lastDigit);
-    else {
+    if (digitNm) {
+      setLeftChance(lastDigit);
+      console.log("1");
+      setValidDigit(false);
+    } else {
       setTryContainer(false);
+      console.log("2");
+      setValidDigit(true);
       // setExpiration(true);
-      setSeconds(timing);
-      setIsActive(true);
+      // setSeconds(timing);
+      // setIsActive(true);
     }
   };
   const sendAuthorise = async (e) => {
@@ -263,9 +286,6 @@ const Authentication = () => {
         `${countryInputCode.at(-1)}${numberCt}`,
         currentTime
       );
-      // const encrypt = new JSEncrypt();
-      // encrypt.setPublicKey(publicKey);
-      // const encrypted = encrypt.encrypt(JSON.stringify(finalResult));
       const encryptedObject = encryptFunc(publicKey, finalResult);
       const res = await axios.post(
         "https://dev-api.mp.ge/authentication/login",
@@ -282,14 +302,22 @@ const Authentication = () => {
         }
       );
       const { errorCode } = res.data;
-      const { expire } = res.data.data;
+      let expire;
+      if (res.data.data) {
+        expire = res.data.data.expire;
+        // expire = 70;
+      }
+      // res.data.data ? ({ expire } = res.data.data) : null;
+      // const { expire } = res.data.data;
 
       // console.log(res.data.data.operation_id);
       const errorCodeCheck = errorCode === 0 ? true : false;
       if (errorCodeCheck) {
         setOperationId(res.data.data.operation_id);
         setCrDate(currentTime);
-        setTiming(expire);
+        console.log(expire);
+        setSeconds(11);
+        setIsActive(true);
       }
       setCheckPasswordName(errorCodeCheck);
       setAuthContainer(errorCodeCheck);
@@ -477,7 +505,8 @@ const Authentication = () => {
                 <PhoneInput
                   onCodeInput={checkInputFillment}
                   checkingFc={passwordNameValid}
-                  checkingBoolean={checkPasswordName}
+                  chPswLg={psw}
+                  errorFunc={setCheckPasswordName}
                 />
                 <div className="mm-password">
                   <div
@@ -491,6 +520,12 @@ const Authentication = () => {
                       value={psw}
                       onInput={(e) => {
                         setPsw(e.currentTarget.value);
+                        if (
+                          countryInputCode[0].length == 0 &&
+                          e.target.value == ""
+                        ) {
+                          setCheckPasswordName(true);
+                        }
                       }}
                       onFocus={(e) => {
                         setTrs(true);
@@ -538,7 +573,9 @@ const Authentication = () => {
                   </span>
                   <small
                     onClick={() => {
-                      alert(12);
+                      setCheckPasswordName(true);
+                      setAuthContainer(false);
+                      setPsw("");
                     }}
                   >
                     <ExitSvg />
@@ -571,12 +608,25 @@ const Authentication = () => {
                       }`}
                     >
                       <small>კოდის მოთხოვნა შესაძლებელია</small>
-                      <div>{seconds}</div>
+                      <div>{`${remainMinute}:${remainSecond}`}</div>
                     </div>
                   </div>
                   <div className={`mm-no-timer ${expiration ? "active" : ""}`}>
                     <span>ლოდინის დრო გავიდა</span>
-                    <button>მოითხოვე კოდი</button>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        sendAuthorise();
+                        setTryContainer(true);
+                        setValidDigit(true);
+                        setOTP();
+                        document
+                          .querySelector(".otp-input>div>div:first-child input")
+                          .focus();
+                      }}
+                    >
+                      მოითხოვე კოდი
+                    </button>
                   </div>
                 </div>
                 <div
@@ -618,15 +668,22 @@ const Authentication = () => {
                     disabled={sendFourDigitBtn ? false : true}
                     onClick={(e) => {
                       e.preventDefault();
-                      setValidDigit(false);
                       afterSendingDigit();
                     }}
                   >
                     შემდეგი
                   </button>
-                  <div className="mm-resend-digits">
+                  <div
+                    className={`mm-resend-digits ${
+                      tryContainer ? "active" : ""
+                    }`}
+                  >
                     <p>არ მიგიღიათ კოდი?</p>
-                    <span>
+                    <span
+                      onClick={() => {
+                        sendAuthorise();
+                      }}
+                    >
                       <RedoSvg />
                       მოთხოვნა
                     </span>
