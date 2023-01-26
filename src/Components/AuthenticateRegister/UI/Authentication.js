@@ -9,12 +9,6 @@ import AuthoriseLogoDark from "../../../svges/AuthoriseLogoDark";
 import MoonSvg from "../../../svges/MoonSvg";
 import SunSvg from "../../../svges/SunSvg";
 import CheckSvg from "../../../img/check.svg";
-import LangSymbol from "../../../svges/LangSymbol";
-import ArrowSvg from "../../../svges/ArrowSvg";
-import EngSvg from "../../../img/eng.svg";
-import RusSvg from "../../../img/rus.svg";
-import GeoSvg from "../../../img/geo.svg";
-import markSvg from "../../../img/mark.svg";
 import ExitSvg from "../../../svges/Exit";
 import RedoSvg from "../../../svges/Redo";
 import exclimationSvg from "../../../img/exclimation.svg";
@@ -22,6 +16,7 @@ import axios from "axios";
 import SearchSvg from "../../../svges/SearchSvg";
 import PhoneInput from "../../LegalEntity/UI/PhoneInput";
 import BlankSpace from "../../PlainFunctions/BlankAfterThree";
+import LanguageChoose from "../../GeneralComponents/LanguageChoose";
 
 const Authentication = () => {
   // dublicated function
@@ -74,6 +69,7 @@ const Authentication = () => {
   const [expiration, setExpiration] = useState(false);
   const [remainMinute, setRemainMinute] = useState("");
   const [remainSecond, setRemainSecond] = useState("");
+  const [langDrop, setLangDrop] = useState(false);
   //OTP
   function handleChange(OTP) {
     setOTP(OTP);
@@ -462,39 +458,7 @@ const Authentication = () => {
               <span>ავტორიზაცია</span>
             </div>
           </div>
-          <div className="mm-lang">
-            <div className="mm-lang__current">
-              <div className="mm-lang__symbol">
-                <span className="mm-lang__icon">
-                  <LangSymbol />
-                </span>
-                <span className="mm-lang__lang">ქარ</span>
-              </div>
-              <span className="mm-lang__arrow">
-                <ArrowSvg />
-              </span>
-            </div>
-            <div className="mm-lang__choose">
-              <a href="en" data-short="ENG">
-                <img src={EngSvg} alt="eng flag" /> English
-                <span className="mark-icon">
-                  <img src={markSvg} alt="" />
-                </span>
-              </a>
-              <a href="ge" data-short="ქარ" className="active">
-                <img src={GeoSvg} alt="geo flag" /> ქართული
-                <span className="mark-icon">
-                  <img src={markSvg} alt="" />
-                </span>
-              </a>
-              <a href="ru" data-short="RUS">
-                <img src={RusSvg} alt="rus flag" /> Русский
-                <span className="mark-icon">
-                  <img src={markSvg} alt="" />
-                </span>
-              </a>
-            </div>
-          </div>
+          <LanguageChoose />
         </header>
         <div className="mp-body">
           <div className="mp-body__child">

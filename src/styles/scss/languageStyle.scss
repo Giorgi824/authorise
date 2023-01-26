@@ -6,6 +6,8 @@
     justify-content: center;
     align-items: center;
     gap: 16px;
+    padding: 12px;
+    border-radius: 10px;
     cursor: pointer;
     .mm-lang__symbol {
       //   @include flexBox(inline-flex, center, center, nowrap, 8px);
@@ -35,6 +37,7 @@
     }
   }
   .mm-lang__current.active {
+    background-color: var(--lang-hover-bg);
     .mm-lang__arrow {
       transform: rotateZ(180deg);
     }
@@ -45,7 +48,7 @@
     right: 0;
     background-color: var(--bg-dark-light);
     width: 280px;
-    padding: 24px;
+    padding: 16px;
     border-radius: 8px;
     flex-direction: column;
     display: none;
@@ -65,16 +68,18 @@
     > a {
       display: flex;
       align-items: center;
-      padding: 16px 0;
+      padding: 16px;
       gap: 16px;
       font-family: var(--firagoBook);
       color: var(--cl-84);
       font-size: 16px;
+      border-radius: 10px;
       border-bottom: 1px solid var(--br-cl-ec);
       // transition: 0.1s ease-in-out;
       line-height: 16px;
       &:hover {
         color: var(--cl-26);
+        background-color: var(--lang-hover-bg);
       }
       .mark-icon {
         margin-left: auto;
@@ -86,15 +91,18 @@
     > a.active {
       color: var(--cl-26);
       font-family: var(--firagoMedium);
+      &:hover {
+        background-color: transparent;
+      }
       .mark-icon {
         display: inline-flex;
       }
     }
     > a:first-child {
-      padding-top: 0;
+      // padding-top: 0;
     }
     > a:last-child {
-      padding-bottom: 0;
+      // padding-bottom: 0;
       border-bottom: none;
     }
   }
