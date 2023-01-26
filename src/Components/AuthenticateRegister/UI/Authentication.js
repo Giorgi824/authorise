@@ -181,7 +181,6 @@ const Authentication = () => {
       `${pincode}${countryInputCode.at(-1)}${numberCt}${secretKey}`,
       sha
     );
-    console.log(`${pincode}${countryInputCode.at(-1)}${numberCt}${secretKey}`);
     const hashedDate = await handleTextInput(currentDate, sha);
     const arrConcat = `${hashedPsw}${hashedPinPhoneSecret}${hashedDate}`;
     const hashedConcat = await handleTextInput(arrConcat, sha);
@@ -256,18 +255,14 @@ const Authentication = () => {
         },
       }
     );
-    // const { errorCode } = res.data;
     const { errorMessage } = res.data;
     const lastDigit = +errorMessage.at(-1);
     const digitNm = Number(lastDigit);
-    console.log(res);
     if (digitNm) {
       setLeftChance(lastDigit);
-      console.log("1");
       setValidDigit(false);
     } else {
       setTryContainer(false);
-      console.log("2");
       setValidDigit(true);
       // setExpiration(true);
       // setSeconds(timing);
@@ -311,8 +306,9 @@ const Authentication = () => {
       if (errorCodeCheck) {
         setOperationId(res.data.data.operation_id);
         setCrDate(currentTime);
-        console.log(expire);
-        setSeconds(11);
+        // console.log(expire);
+        // setSeconds(11);
+        setSeconds(expire);
         setIsActive(true);
       }
       setCheckPasswordName(errorCodeCheck);
@@ -536,10 +532,12 @@ const Authentication = () => {
                     {numberCt ? BlankSpace(numberCt) : ""}
                   </span>
                   <small
+                    className="mm-clean-inputs"
                     onClick={() => {
                       setCheckPasswordName(true);
                       setAuthContainer(false);
                       setPsw("");
+                      setIsActive(false);
                     }}
                   >
                     <ExitSvg />
@@ -645,6 +643,8 @@ const Authentication = () => {
                     <p>არ მიგიღიათ კოდი?</p>
                     <span
                       onClick={() => {
+                        setOTP();
+                        setValidDigit(true);
                         sendAuthorise();
                       }}
                     >

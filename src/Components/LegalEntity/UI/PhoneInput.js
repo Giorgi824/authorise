@@ -50,10 +50,13 @@ function PhoneInput({ onCodeInput, checkingFc, chPswLg, errorFunc }) {
   useEffect(() => {
     codeRef.current.focus();
     result();
-    document.addEventListener("click", () => {
+    document.addEventListener("click", (e) => {
       if (langRef.current.classList.contains("active")) {
         setPhoneToggle(false);
       }
+    });
+    document.querySelector(".mm-clean-inputs").addEventListener("click", () => {
+      setPhoneNumber("");
     });
   }, []);
 
@@ -266,10 +269,8 @@ function PhoneInput({ onCodeInput, checkingFc, chPswLg, errorFunc }) {
               if (chPswLg.trim().length == 0 && e.target.value == "") {
                 errorFunc(true);
               }
-              // console.log(chPswLg);
             }}
             onFocus={(e) => {
-              // console.log("test");
               setFocusedInput(true);
             }}
             placeholder={chosenCountryCode.example}
