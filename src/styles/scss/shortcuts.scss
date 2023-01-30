@@ -1,0 +1,20 @@
+// mixins
+@mixin flexBox($type, $horiz, $vert, $wrap, $gap) {
+  display: $type;
+  justify-content: $horiz;
+  align-items: $vert;
+  flex-wrap: $wrap;
+  gap: $gap;
+}
+// placeholders
+%btn-box {
+  padding: 0px 16px;
+  height: 56px;
+  border-radius: 12px;
+  @include flexBox(inline-flex, center, center, inherit, 8px);
+  cursor: pointer;
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}

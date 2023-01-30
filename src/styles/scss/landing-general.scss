@@ -1,0 +1,189 @@
+.centered-element {
+  margin: 0 auto;
+  max-width: 1520px;
+  width: calc(100% - 400px);
+  @media (max-width: 1440px) {
+    max-width: calc(100% - 322px);
+    width: calc(100% - 322px);
+  }
+  @media (max-width: 1024px) {
+    max-width: calc(100% - 226px);
+    width: calc(100% - 226px);
+  }
+  @media (max-width: 744px) {
+    // max-width: calc(100% - 376px);
+    // width: calc(100% - 376px);
+    max-width: 100%;
+    width: calc(100% - 48px);
+  }
+  @media (max-width: 480px) {
+    max-width: calc(100% - 32px);
+    width: calc(100% - 32px);
+  }
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  .mm-input {
+    padding: 0 10px;
+    border-radius: 14px;
+    background-color: var(--bg-input);
+    display: flex;
+    height: 64px;
+    gap: 7px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    // transition: 0.1s ease-in-out;
+    @media (max-width: 960px) {
+      height: 48px;
+    }
+    &:hover {
+      border: 2px solid var(--border-hover-input);
+    }
+    input {
+      flex-grow: 1;
+      padding-left: 14px;
+      background-color: transparent;
+      border: none;
+      color: var(--cl-26);
+      font-family: var(--firagoBook);
+      font-size: var(--ft-input);
+      cursor: pointer;
+      max-width: calc(100% - 115px);
+      @media (max-width: 960px) {
+        max-width: calc(100% - 45px);
+      }
+      &::placeholder {
+        color: var(--cl-placeholder);
+        font-size: var(--ft-input);
+        line-height: 24px;
+        // transition: 0.1s ease-in-out;
+        font-family: var(--firagoBook);
+      }
+      &:focus {
+        outline: none;
+        &::placeholder {
+          opacity: 0;
+        }
+      }
+      & + button.rejected {
+        .green-line {
+          display: none !important;
+        }
+        .red-exit {
+          display: inline-block !important;
+        }
+      }
+    }
+    .mm-valid-btn {
+      // padding: 10px 16px;
+      color: #fff;
+      font-size: 14px;
+      margin-left: auto;
+      font-family: var(--firagoMedium);
+      background-color: #2496ff;
+      border-radius: 10px;
+      height: 44px;
+      align-self: center;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      @media (max-width: 960px) {
+        padding: 4px;
+        height: 32px;
+      }
+      > * {
+        display: inline-flex;
+        padding: 10px 16px;
+      }
+      img {
+        display: none;
+      }
+      .green-line {
+        display: inline-block;
+      }
+      > span {
+        display: inline-block;
+        @media (max-width: 960px) {
+          display: none;
+        }
+      }
+      > svg {
+        width: 24px;
+        height: 24px;
+        display: none;
+        path {
+          stroke: #fff;
+        }
+      }
+    }
+    .mm-valid-btn:disabled {
+      background-color: var(--cl-green);
+      svg {
+        display: inline-block;
+      }
+    }
+    .mm-valid-btn.rejected {
+      background-color: var(--cl-red);
+    }
+  }
+  .mm-input.focused {
+    border-color: #248eff;
+    background-color: var(--input-focused-bg);
+  }
+  .mm-input.rejected {
+    border-color: var(--cl-red);
+    & + div {
+      .reject {
+        display: block !important;
+      }
+    }
+  }
+  .mm-input.completed {
+    border-color: var(--cl-green);
+    > button > img {
+      display: none !important;
+    }
+    & + div {
+      .complete {
+        display: block !important;
+      }
+    }
+  }
+  .mm-input.blanked {
+    & + div {
+      .blanked {
+        display: block !important;
+      }
+    }
+  }
+  .mm-input-text {
+    position: absolute;
+    top: calc(100% + 16px);
+    left: 0;
+    span {
+      font-family: var(--firagoBook);
+      font-size: 14px;
+      line-height: 24px;
+      display: none;
+      @media (max-width: 480px) {
+        font-size: 12px;
+        line-height: 20px;
+      }
+    }
+    .complete {
+      color: var(--cl-green);
+    }
+    .reject {
+      color: var(--cl-red);
+    }
+    .blanked {
+      color: var(--cl-84);
+    }
+    span.active {
+      display: block;
+    }
+  }
+}

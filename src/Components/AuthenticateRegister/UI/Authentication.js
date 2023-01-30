@@ -4,19 +4,16 @@ import OtpInput from "react-otp-input";
 import JSEncrypt from "jsencrypt";
 import "../../../styles/css/authentication.css";
 import "../../../styles/css/languageStyle.css";
-import AuthoriseLogoLight from "../../../svges/AuthoriseLogoLight";
-import AuthoriseLogoDark from "../../../svges/AuthoriseLogoDark";
-import MoonSvg from "../../../svges/MoonSvg";
-import SunSvg from "../../../svges/SunSvg";
 import CheckSvg from "../../../img/check.svg";
 import ExitSvg from "../../../svges/Exit";
 import RedoSvg from "../../../svges/Redo";
 import exclimationSvg from "../../../img/exclimation.svg";
 import axios from "axios";
-import SearchSvg from "../../../svges/SearchSvg";
 import PhoneInput from "../../LegalEntity/UI/PhoneInput";
 import BlankSpace from "../../PlainFunctions/BlankAfterThree";
 import LanguageChoose from "../../GeneralComponents/LanguageChoose";
+import ThemeChoose from "../../GeneralComponents/ThemeChoose";
+import LogoDarkLight from "./LogoDarkLight";
 
 const Authentication = () => {
   // dublicated function
@@ -49,7 +46,7 @@ const Authentication = () => {
   };
 
   const [trs, setTrs] = useState(false);
-  const [mode, setMode] = useState(null);
+  // const [mode, setMode] = useState(null);
   const [disabledBtn, setDisabledBtn] = useState(false);
   const [countryInputCode, setChosenCountryCode] = useState([]);
   const [countriesCode, setCountriesCode] = useState(false);
@@ -122,15 +119,28 @@ const Authentication = () => {
     return () => clearInterval(interval);
   }, [isActive, seconds]);
   // end of timer
-  const getCurrentTheme = () => {
-    let theme = window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-    let storage = localStorage.getItem("MM.theme")
-      ? (theme = localStorage.getItem("MM.theme"))
-      : null;
-    return theme;
-  };
+
+  useEffect(() => {
+    const allTooltipBtns = document.querySelectorAll(
+      ".mm-phone-error__text>img"
+    );
+    allTooltipBtns.forEach((item) => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        document
+          .querySelectorAll(".tooltip")
+          .forEach((item, idx) => item.classList.remove("active"));
+        const sib = e.currentTarget.parentNode.querySelector(".tooltip");
+        sib.classList.toggle("active");
+      });
+    });
+    document.body.addEventListener("click", () => {
+      if (document.querySelector(".tooltip.active")) {
+        document.querySelector(".tooltip.active").classList.remove("active");
+      }
+    });
+  }, []);
+
   const handleTextInput = (val, algorithm) => {
     // Get the value
     let value = val;
@@ -261,12 +271,14 @@ const Authentication = () => {
     if (digitNm) {
       setLeftChance(lastDigit);
       setValidDigit(false);
+      console.log("right digit");
     } else {
       setTryContainer(false);
       setValidDigit(true);
+      console.log("false digit");
       // setExpiration(true);
       // setSeconds(timing);
-      // setIsActive(true);
+      setIsActive(false);
     }
   };
   const sendAuthorise = async (e) => {
@@ -302,7 +314,9 @@ const Authentication = () => {
       // const { expire } = res.data.data;
 
       // console.log(res.data.data.operation_id);
+      console.log(errorCode, res);
       const errorCodeCheck = errorCode === 0 ? true : false;
+
       if (errorCodeCheck) {
         setOperationId(res.data.data.operation_id);
         setCrDate(currentTime);
@@ -310,6 +324,11 @@ const Authentication = () => {
         // setSeconds(11);
         setSeconds(expire);
         setIsActive(true);
+        setTryContainer(true);
+        console.log(psw);
+        console.log(numberCt);
+      } else if (errorCode == 1007) {
+        console.log("test");
       }
       setCheckPasswordName(errorCodeCheck);
       setAuthContainer(errorCodeCheck);
@@ -339,21 +358,6 @@ const Authentication = () => {
       );
     }
   }
-
-  useEffect(() => {
-    const res = getCurrentTheme();
-    loadTheme(res);
-  }, []);
-  const loadTheme = (theme) => {
-    const root = document.querySelector(":root");
-    root.setAttribute("color-scheme", theme);
-    setMode(theme);
-  };
-  const btnFunc = function (e) {
-    const currClass = e.currentTarget.classList[0];
-    localStorage.setItem("MM.theme", currClass);
-    loadTheme(currClass);
-  };
   const checkInputFillment = (...args) => {
     setChosenCountryCode(args);
   };
@@ -378,12 +382,12 @@ const Authentication = () => {
     }
   }, [countryInputCode, psw]);
   return (
-    <main className="mm-authenticate">
+    <div className="mm-authenticate">
       <aside>
         <div className="mp-aside-upper">
           <div className="mp-logo">
             <span>
-              {mode === "dark" ? <AuthoriseLogoDark /> : <AuthoriseLogoLight />}
+              <LogoDarkLight />
             </span>
             <div>My Profile</div>
           </div>
@@ -407,39 +411,8 @@ const Authentication = () => {
           </ul>
         </div>
         <div className="mp-aside-bottom">
-          <div className="dark-light-mode">
-            <div>
-              <div className="mm-btn-div mm-light">
-                <button
-                  onClick={function (e) {
-                    btnFunc(e);
-                  }}
-                  className="light"
-                  role="mode switch"
-                  arial-label="light mode"
-                  data-svg="sunSvg"
-                >
-                  <SunSvg />
-                  <span data-text="lightMode">ღია</span>
-                </button>
-              </div>
-              <div className="mm-btn-div mm-dark">
-                <button
-                  onClick={function (e) {
-                    btnFunc(e);
-                  }}
-                  className="dark"
-                  role="mode switch"
-                  arial-label="dark mode"
-                  data-svg="moonSvg"
-                >
-                  <MoonSvg />
-                  <span data-text="darkMode">მუქი</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <p>© 2009-2022 LLC Money Movers</p>
+          <ThemeChoose />
+          <p>© 2009-2023 LLC Money Movers</p>
         </div>
       </aside>
       <section>
@@ -520,6 +493,7 @@ const Authentication = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     sendAuthorise();
+                    // setTryContainer(true);
                     // setAuthContainer(!checkPasswordName);
                   }}
                 >
@@ -537,7 +511,9 @@ const Authentication = () => {
                       setCheckPasswordName(true);
                       setAuthContainer(false);
                       setPsw("");
+                      setOTP();
                       setIsActive(false);
+                      setValidDigit(true);
                     }}
                   >
                     <ExitSvg />
@@ -662,7 +638,7 @@ const Authentication = () => {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 };
 
