@@ -50,7 +50,8 @@ input:-webkit-autofill:active {
     border-radius: 100px;
     // overflow: hidden;
     display: inline-flex;
-    background-color: var(--bg-mode);
+    // background-color: var(--bg-mode);
+    background-color: var(--lang-hover-bg);
     padding: 4px;
     border-radius: 12px;
     position: relative;
@@ -140,7 +141,8 @@ input:-webkit-autofill:active {
     align-items: center;
     padding: 16px 24px;
     border-radius: 12px;
-    background-color: var(--bg-app);
+    // background-color: var(--bg-app);
+    background-color: var(--lang-hover-bg);
     svg {
       height: 24px;
     }

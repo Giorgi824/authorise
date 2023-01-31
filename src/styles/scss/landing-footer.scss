@@ -158,7 +158,7 @@ footer {
       margin-left: auto;
       display: flex;
       flex-direction: column;
-      // gap: 24px;
+      gap: 24px;
       // max-width: 343px;
       min-width: 343px;
 
@@ -176,23 +176,20 @@ footer {
       //   margin-bottom: 0;
       // }
       > span {
-        margin-bottom: 24px;
-        @media (max-width: 1024px) {
-          margin-bottom: 16px;
-        }
-        @media (max-width: 744px) {
-          margin-bottom: 24px;
-        }
+        // margin-bottom: 24px;
+        // @media (max-width: 1024px) {
+        //   margin-bottom: 16px;
+        // }
+        // @media (max-width: 744px) {
+        //   margin-bottom: 24px;
+        // }
       }
       .mm-address-btn {
         display: inline-flex;
         gap: 60px;
         flex-wrap: wrap;
-        margin-bottom: 24px;
+        // margin-bottom: 24px;
         @media (max-width: 1440px) {
-          gap: 24px;
-        }
-        @media (max-width: 1024px) {
           gap: 24px;
         }
         @media (max-width: 744px) {
@@ -241,7 +238,7 @@ footer {
   }
 }
 .mm-send-news {
-  margin-top: 32px;
+  margin-top: 8px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -277,4 +274,9 @@ footer {
   > span {
     max-width: 200px;
   }
+}
+.mm-mail {
+  color: var(--cl-blue) !important;
+  align-self: flex-start;
+  text-decoration: underline;
 }
