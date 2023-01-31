@@ -124,10 +124,9 @@ function FooterSendNews() {
               src={RemoveSvg}
               alt=""
               onClick={() => {
-                defaultStyle();
-                setTimeout(() => {
-                  inputParent.current.classList.remove("blanked");
-                }, 0);
+                inputRef.current.value = "";
+                sendBtn.current.classList.remove("rejected");
+                parentInput.current.classList.remove("rejected");
               }}
             />
           </button>
