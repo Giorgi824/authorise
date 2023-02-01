@@ -4,47 +4,16 @@ import OtpInput from "react-otp-input";
 import JSEncrypt from "jsencrypt";
 import "../../../styles/css/authentication.css";
 import "../../../styles/css/languageStyle.css";
-import CheckSvg from "../../../img/check.svg";
 import ExitSvg from "../../../svges/Exit";
 import RedoSvg from "../../../svges/Redo";
 import exclimationSvg from "../../../img/exclimation.svg";
 import axios from "axios";
 import PhoneInput from "../../LegalEntity/UI/PhoneInput";
 import BlankSpace from "../../PlainFunctions/BlankAfterThree";
-import LanguageChoose from "../../GeneralComponents/LanguageChoose";
-import ThemeChoose from "../../GeneralComponents/ThemeChoose";
-import LogoDarkLight from "./LogoDarkLight";
-
+import CurrentTime from "../../PlainFunctions/CurrentTime";
+import { useNavigate } from "react-router-dom";
 const Authentication = () => {
-  // dublicated function
-  const getFormatedDate = () => {
-    const date = new Date();
-    const monthCompare = date.getMonth() + 1;
-    const minuteCompare = date.getMinutes();
-    const hourCompare = date.getHours();
-    const secondCompare = date.getSeconds();
-    const dayCompare = date.getDate();
-    const year = date.getFullYear();
-    const month = monthCompare < 10 ? `0${monthCompare}` : monthCompare;
-    const day = dayCompare < 10 ? `0${dayCompare}` : dayCompare;
-    const hours = hourCompare < 10 ? `0${hourCompare}` : hourCompare;
-    const minutes = minuteCompare < 10 ? `0${minuteCompare}` : minuteCompare;
-    const seconds = secondCompare < 10 ? `0${secondCompare}` : secondCompare;
-    return (
-      year +
-      "-" +
-      month +
-      "-" +
-      day +
-      " " +
-      hours +
-      ":" +
-      minutes +
-      ":" +
-      seconds
-    );
-  };
-
+  const navigate = useNavigate();
   const [trs, setTrs] = useState(false);
   // const [mode, setMode] = useState(null);
   const [disabledBtn, setDisabledBtn] = useState(false);
@@ -282,7 +251,7 @@ const Authentication = () => {
     }
   };
   const sendAuthorise = async (e) => {
-    const currentTime = getFormatedDate();
+    const currentTime = CurrentTime();
     try {
       const finalResult = await beforeAuthorise(
         psw,
@@ -337,7 +306,7 @@ const Authentication = () => {
     }
   };
   const shemdegiBtn = async (e) => {
-    const currentTime = getFormatedDate();
+    const currentTime = CurrentTime();
     try {
     } catch (error) {
       console.log(error);
@@ -382,104 +351,112 @@ const Authentication = () => {
     }
   }, [countryInputCode, psw]);
   return (
-    <div className="mm-authenticate">
-      <aside>
-        <div className="mp-aside-upper">
-          <div className="mp-logo">
-            <span>
-              <LogoDarkLight />
-            </span>
-            <div>My Profile</div>
-          </div>
-          <ul>
-            <li>
-              <img src={CheckSvg} alt="check icon" />
-              <span>საფულის შევსება</span>
-            </li>
-            <li>
-              <img src={CheckSvg} alt="check icon" />
-              <span>კომუნალური და სხვა გადახდები</span>
-            </li>
-            <li>
-              <img src={CheckSvg} alt="check icon" />
-              <span>სხვა არაფინანსური მომსახურება</span>
-            </li>
-            <li>
-              <img src={CheckSvg} alt="check icon" />
-              <span>ჩათი</span>
-            </li>
-          </ul>
-        </div>
-        <div className="mp-aside-bottom">
-          <ThemeChoose />
-          <p>© 2009-2023 LLC Money Movers</p>
-        </div>
-      </aside>
-      <section>
-        <header>
-          <div className="mp-condition">
-            <div className="mp-registration">
-              არ ხარ ავტორიზირებული?
-              <span>დარეგისტრირდი</span>
-            </div>
-            <div className="mp-authorization">
-              ავტორიზირებული ხარ?
-              <span>ავტორიზაცია</span>
-            </div>
-          </div>
-          <LanguageChoose />
-        </header>
-        <div className="mp-body">
-          <div className="mp-body__child">
-            <h1>ავტორიზაცია</h1>
-            <span>შეუზღუდავი ონლაინ შესაძლებლობები</span>
-            <form>
-              <div className={`authorising ${authContainer ? "" : "active"}`}>
-                <PhoneInput
-                  onCodeInput={checkInputFillment}
-                  checkingFc={passwordNameValid}
-                  chPswLg={psw}
-                  errorFunc={setCheckPasswordName}
+    <div className="mp-body">
+      <div className="mp-body__child">
+        <h1>ავტორიზაცია</h1>
+        <span>შეუზღუდავი ონლაინ შესაძლებლობები</span>
+        <form>
+          <div className={`authorising ${authContainer ? "" : "active"}`}>
+            <PhoneInput
+              onCodeInput={checkInputFillment}
+              checkingFc={passwordNameValid}
+              chPswLg={psw}
+              errorFunc={setCheckPasswordName}
+            />
+            <div className="mm-password">
+              <div
+                className={`labeled-div ${
+                  trs ? "bg-transparent focused" : ""
+                } ${passwordNameValid("error")}`}
+              >
+                <input
+                  type="password"
+                  placeholder="პაროლი"
+                  value={psw}
+                  onInput={(e) => {
+                    setPsw(e.currentTarget.value);
+                    if (
+                      countryInputCode[0].length == 0 &&
+                      e.target.value == ""
+                    ) {
+                      setCheckPasswordName(true);
+                    }
+                  }}
+                  onFocus={(e) => {
+                    setTrs(true);
+                  }}
+                  onBlur={(e) => {
+                    setTrs(false);
+                  }}
                 />
-                <div className="mm-password">
-                  <div
-                    className={`labeled-div ${
-                      trs ? "bg-transparent focused" : ""
-                    } ${passwordNameValid("error")}`}
-                  >
-                    <input
-                      type="password"
-                      placeholder="პაროლი"
-                      value={psw}
-                      onInput={(e) => {
-                        setPsw(e.currentTarget.value);
-                        if (
-                          countryInputCode[0].length == 0 &&
-                          e.target.value == ""
-                        ) {
-                          setCheckPasswordName(true);
-                        }
-                      }}
-                      onFocus={(e) => {
-                        setTrs(true);
-                      }}
-                      onBlur={(e) => {
-                        setTrs(false);
-                      }}
-                    />
-                  </div>
+              </div>
+            </div>
+            <div className="mm-forget-password">
+              <span
+                onClick={() => {
+                  navigate("forget-password");
+                }}
+              >
+                დაგავიწყდა პაროლი?
+              </span>
+            </div>
+            <div
+              className={`mm-phone-error both-error ${passwordNameValid(
+                "active"
+              )}`}
+            >
+              <div className="mm-phone-error__text">
+                <img src={exclimationSvg} alt="warning sign icon" />
+                <span>ტელეფონის ნომერი ან პაროლი არასწორია</span>
+                <div className="tooltip">
+                  <p>
+                    ცნობილი ფაქტია, რომ გვერდის წაკითხვად შიგთავსს შეუძლია
+                    მკითხველის ყურადღება მიიზიდოს და დიზაინის აღქმაში ხელი .
+                  </p>
                 </div>
-                <div className="mm-forget-password">
-                  <span>დაგავიწყდა პაროლი?</span>
-                </div>
+              </div>
+            </div>
+            <button
+              disabled={disabledBtn ? false : true}
+              onClick={(e) => {
+                e.preventDefault();
+                sendAuthorise();
+                // setTryContainer(true);
+                // setAuthContainer(!checkPasswordName);
+              }}
+            >
+              შესვლა
+            </button>
+          </div>
+          <div className={`authorised ${authContainer ? "active" : ""}`}>
+            <div className="labeled-div">
+              <span className="entered-phone">
+                {numberCt ? BlankSpace(numberCt) : ""}
+              </span>
+              <small
+                className="mm-clean-inputs"
+                onClick={() => {
+                  setCheckPasswordName(true);
+                  setAuthContainer(false);
+                  setPsw("");
+                  setOTP();
+                  setIsActive(false);
+                  setValidDigit(true);
+                }}
+              >
+                <ExitSvg />
+              </small>
+            </div>
+            <div className={`mm-code-tryout ${tryContainer ? "" : "active"}`}>
+              <div className="mm-timer">
                 <div
-                  className={`mm-phone-error both-error ${passwordNameValid(
-                    "active"
-                  )}`}
+                  className={`mm-phone-error both-error ${
+                    expiration ? "" : "active"
+                  }`}
                 >
                   <div className="mm-phone-error__text">
                     <img src={exclimationSvg} alt="warning sign icon" />
-                    <span>ტელეფონის ნომერი ან პაროლი არასწორია</span>
+                    <span>მცდელობების რაოდენობა ამოიწურა</span>
                     <div className="tooltip">
                       <p>
                         ცნობილი ფაქტია, რომ გვერდის წაკითხვად შიგთავსს შეუძლია
@@ -488,156 +465,88 @@ const Authentication = () => {
                     </div>
                   </div>
                 </div>
+                <div
+                  className={`mm-resend-digits ${expiration ? "" : "active"}`}
+                >
+                  <small>კოდის მოთხოვნა შესაძლებელია</small>
+                  <div>{`${remainMinute}:${remainSecond}`}</div>
+                </div>
+              </div>
+              <div className={`mm-no-timer ${expiration ? "active" : ""}`}>
+                <span>ლოდინის დრო გავიდა</span>
                 <button
-                  disabled={disabledBtn ? false : true}
                   onClick={(e) => {
                     e.preventDefault();
                     sendAuthorise();
-                    // setTryContainer(true);
-                    // setAuthContainer(!checkPasswordName);
+                    setTryContainer(true);
+                    setValidDigit(true);
+                    setOTP();
+                    document
+                      .querySelector(".otp-input>div>div:first-child input")
+                      .focus();
                   }}
                 >
-                  შესვლა
+                  მოითხოვე კოდი
                 </button>
               </div>
-              <div className={`authorised ${authContainer ? "active" : ""}`}>
-                <div className="labeled-div">
-                  <span className="entered-phone">
-                    {numberCt ? BlankSpace(numberCt) : ""}
-                  </span>
-                  <small
-                    className="mm-clean-inputs"
-                    onClick={() => {
-                      setCheckPasswordName(true);
-                      setAuthContainer(false);
-                      setPsw("");
-                      setOTP();
-                      setIsActive(false);
-                      setValidDigit(true);
-                    }}
-                  >
-                    <ExitSvg />
-                  </small>
+            </div>
+            <div className={`mm-code-input ${tryContainer ? "active" : ""}`}>
+              <div className="user-txt">
+                მითითებულ ტელ.ნომერზე
+                {userPhoneExit()}
+                გამოიგზავნა 4 ნიშნა კოდი
+              </div>
+              <div className="digit-texts">
+                <span className={`${validDigit ? "" : "active"}`}>
+                  დარჩა {leftChance} მცდელობა
+                </span>
+                <div className={`otp-input ${validDigit ? "" : "reddish"}`}>
+                  <OtpInput onChange={handleChange} value={OTP} numInputs={4} />
                 </div>
-                <div
-                  className={`mm-code-tryout ${tryContainer ? "" : "active"}`}
-                >
-                  <div className="mm-timer">
-                    <div
-                      className={`mm-phone-error both-error ${
-                        expiration ? "" : "active"
-                      }`}
-                    >
-                      <div className="mm-phone-error__text">
-                        <img src={exclimationSvg} alt="warning sign icon" />
-                        <span>მცდელობების რაოდენობა ამოიწურა</span>
-                        <div className="tooltip">
-                          <p>
-                            ცნობილი ფაქტია, რომ გვერდის წაკითხვად შიგთავსს
-                            შეუძლია მკითხველის ყურადღება მიიზიდოს და დიზაინის
-                            აღქმაში ხელი .
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className={`mm-resend-digits ${
-                        expiration ? "" : "active"
-                      }`}
-                    >
-                      <small>კოდის მოთხოვნა შესაძლებელია</small>
-                      <div>{`${remainMinute}:${remainSecond}`}</div>
-                    </div>
-                  </div>
-                  <div className={`mm-no-timer ${expiration ? "active" : ""}`}>
-                    <span>ლოდინის დრო გავიდა</span>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        sendAuthorise();
-                        setTryContainer(true);
-                        setValidDigit(true);
-                        setOTP();
-                        document
-                          .querySelector(".otp-input>div>div:first-child input")
-                          .focus();
-                      }}
-                    >
-                      მოითხოვე კოდი
-                    </button>
-                  </div>
-                </div>
-                <div
-                  className={`mm-code-input ${tryContainer ? "active" : ""}`}
-                >
-                  <div className="user-txt">
-                    მითითებულ ტელ.ნომერზე
-                    {userPhoneExit()}
-                    გამოიგზავნა 4 ნიშნა კოდი
-                  </div>
-                  <div className="digit-texts">
-                    <span className={`${validDigit ? "" : "active"}`}>
-                      დარჩა {leftChance} მცდელობა
-                    </span>
-                    <div className={`otp-input ${validDigit ? "" : "reddish"}`}>
-                      <OtpInput
-                        onChange={handleChange}
-                        value={OTP}
-                        numInputs={4}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className={`mm-phone-error ${validDigit ? "" : "active"}`}
-                  >
-                    <div className="mm-phone-error__text">
-                      <img src={exclimationSvg} alt="warning sign icon" />
-                      <span>თქვენ მიერ შეყვანილი კოდი არასწორია</span>
-                      <div className="tooltip">
-                        <p>
-                          ცნობილი ფაქტია, რომ გვერდის წაკითხვად შიგთავსს შეუძლია
-                          მკითხველის ყურადღება მიიზიდოს და დიზაინის აღქმაში ხელი
-                          .
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    disabled={sendFourDigitBtn ? false : true}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      afterSendingDigit();
-                    }}
-                  >
-                    შემდეგი
-                  </button>
-                  <div
-                    className={`mm-resend-digits ${
-                      tryContainer ? "active" : ""
-                    }`}
-                  >
-                    <p>არ მიგიღიათ კოდი?</p>
-                    <span
-                      onClick={() => {
-                        setOTP();
-                        setValidDigit(true);
-                        sendAuthorise();
-                      }}
-                    >
-                      <RedoSvg />
-                      მოთხოვნა
-                    </span>
+              </div>
+              <div className={`mm-phone-error ${validDigit ? "" : "active"}`}>
+                <div className="mm-phone-error__text">
+                  <img src={exclimationSvg} alt="warning sign icon" />
+                  <span>თქვენ მიერ შეყვანილი კოდი არასწორია</span>
+                  <div className="tooltip">
+                    <p>
+                      ცნობილი ფაქტია, რომ გვერდის წაკითხვად შიგთავსს შეუძლია
+                      მკითხველის ყურადღება მიიზიდოს და დიზაინის აღქმაში ხელი .
+                    </p>
                   </div>
                 </div>
               </div>
-            </form>
-            <p className={`mm-txt ${authContainer ? "" : "active"}`}>
-              ეს საიტი დაცულია MM.ge-ით და Google-ის კონფიდენციალურობის
-              პოლიტიკით.
-            </p>
+              <button
+                disabled={sendFourDigitBtn ? false : true}
+                onClick={(e) => {
+                  e.preventDefault();
+                  afterSendingDigit();
+                }}
+              >
+                შემდეგი
+              </button>
+              <div
+                className={`mm-resend-digits ${tryContainer ? "active" : ""}`}
+              >
+                <p>არ მიგიღიათ კოდი?</p>
+                <span
+                  onClick={() => {
+                    setOTP();
+                    setValidDigit(true);
+                    sendAuthorise();
+                  }}
+                >
+                  <RedoSvg />
+                  მოთხოვნა
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </form>
+        <p className={`mm-txt ${authContainer ? "" : "active"}`}>
+          ეს საიტი დაცულია MM.ge-ით და Google-ის კონფიდენციალურობის პოლიტიკით.
+        </p>
+      </div>
     </div>
   );
 };

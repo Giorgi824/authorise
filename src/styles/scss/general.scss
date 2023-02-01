@@ -44,14 +44,12 @@ input:-webkit-autofill:active {
   background-color: yellow !important;
 }
 
-// mode styles
 .dark-light-mode {
   > div {
     border-radius: 100px;
     // overflow: hidden;
     display: inline-flex;
-    // background-color: var(--bg-mode);
-    background-color: var(--lang-hover-bg);
+    background-color: var(--bg-mode);
     padding: 4px;
     border-radius: 12px;
     position: relative;
@@ -143,12 +141,21 @@ input:-webkit-autofill:active {
     border-radius: 12px;
     // background-color: var(--bg-app);
     background-color: var(--lang-hover-bg);
+    @media (max-width: 1024px) {
+      padding: 14px 16px;
+    }
     svg {
       height: 24px;
+      @media (max-width: 1024px) {
+        height: 20px;
+      }
     }
   }
   a[data-svg="appleSvg"] {
     svg {
+      @media (max-width: 1024px) {
+        width: 95.86px;
+      }
       path {
         fill: var(--cl-26);
       }
@@ -157,6 +164,9 @@ input:-webkit-autofill:active {
   a[data-svg="googleIconSvg"] {
     span {
       svg {
+        @media (max-width: 1024px) {
+          width: 68.25px;
+        }
         path {
           fill: var(--cl-26);
         }
@@ -170,7 +180,8 @@ input:-webkit-autofill:active {
   background-color: var(--cl-blue);
   border-radius: 10px;
   align-self: flex-start;
-  padding: 16px 24px;
+  padding: 0 24px;
+  height: 48px;
   font-size: 16px;
   font-family: var(--firagoMedium);
 }

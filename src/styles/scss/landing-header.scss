@@ -23,13 +23,64 @@ header {
     color: var(--cl-26);
     font-family: var(--poppins);
     font-size: 24px;
+    @media (max-width: 1440px) {
+      font-size: 20px;
+    }
+    @media (max-width: 1024px) {
+      font-size: 16px;
+    }
     span {
-      @media (max-width: 480px) {
+      @media (max-width: 744px) {
         display: none;
+      }
+    }
+    svg {
+      @media (max-width: 1440px) {
+        height: 20px;
+      }
+      @media (max-width: 1024px) {
+        height: 18px;
+      }
+      @media (max-width: 744px) {
+        height: 40px;
       }
     }
   }
 }
 .language-enter {
   @include flexBox(inline-flex, center, center, nowrap, 48px);
+  @media (max-width: 744px) {
+    gap: 16px;
+  }
+}
+footer {
+  .mm-blue-btn {
+    @media (max-width: 1024px) {
+      padding: 16px;
+      // span {
+      //   display: none;
+      // }
+    }
+    @media (max-width: 980px) {
+      span {
+        display: inline-block;
+      }
+    }
+    @media (max-width: 744px) {
+      span {
+        display: inline-block;
+      }
+    }
+    @media (max-width: 744px) {
+      font-size: 12px;
+    }
+  }
+}
+
+header {
+  .mm-blue-btn {
+    @media (max-width: 744px) {
+      font-size: 12px;
+    }
+  }
 }

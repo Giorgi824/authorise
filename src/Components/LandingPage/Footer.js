@@ -17,29 +17,31 @@ function Footer() {
             </p>
             <AppLinks />
           </div>
-          <div className="mm-top-footer__item footer-contacts">
-            <span data-text="contactTitle">კონტაქტი</span>
-            <div className="mm-address-btn">
-              <span className="mm-address">
-                საქართველო, თბილისი, 0131 დ.აღმაშენებლის ხეივანი 172ბ
-              </span>
-              <a
-                href="https://goo.gl/maps/KRo9q4jBLxuYC7wx8"
-                target="_blank"
-                data-svg="sendSvg"
-                className="mm-blue-btn"
-              >
-                <ArrowGetSvg />
-                <span>როგორ მივიდე</span>
+          <div className="mm-top-footer__item">
+            <div className="footer-contacts">
+              <span data-text="contactTitle">კონტაქტი</span>
+              <div className="mm-address-btn">
+                <span className="mm-address">
+                  საქართველო, თბილისი, 0131 დ.აღმაშენებლის ხეივანი 172ბ
+                </span>
+                <a
+                  href="https://goo.gl/maps/KRo9q4jBLxuYC7wx8"
+                  target="_blank"
+                  data-svg="sendSvg"
+                  className="mm-blue-btn"
+                >
+                  <ArrowGetSvg />
+                  <span>როგორ მივიდე</span>
+                </a>
+              </div>
+              <a href="tel:+995322500555">+995 32 2 500-555</a>
+              <a href="mailto:info@mp.ge" className="mm-mail">
+                info@mp.ge
               </a>
-            </div>
-            <a href="tel:+995322500555">+995 32 2 500-555</a>
-            <a href="mailto:info@mp.ge" className="mm-mail">
-              info@mp.ge
-            </a>
-            <div className="mm-send-news">
-              <span>სიახლეების გამოწერა</span>
-              <FooterSendNews />
+              <div className="mm-send-news">
+                <span>სიახლეების გამოწერა</span>
+                <FooterSendNews />
+              </div>
             </div>
           </div>
           {/* <button data-svg="sendSvg" className="mm-blue-btn">

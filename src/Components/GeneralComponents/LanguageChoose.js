@@ -20,7 +20,7 @@ function LanguageChoose() {
   const langChooseRef = useRef();
   useEffect(() => {
     document.addEventListener("click", () => {
-      if (langChooseRef.current.classList.contains("active")) {
+      if (langChooseRef.current?.classList.contains("active")) {
         setLangDrop(false);
       }
     });

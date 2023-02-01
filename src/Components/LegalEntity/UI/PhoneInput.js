@@ -3,6 +3,7 @@ import BlankSpace from "../../PlainFunctions/BlankAfterThree";
 import ArrowSvg from "../../../svges/ArrowSvg";
 import SearchSvg from "../../../svges/SearchSvg";
 import exclimationSvg from "../../../img/exclimation.svg";
+import CurrentTime from "../../PlainFunctions/CurrentTime";
 import axios from "axios";
 function PhoneInput({ onCodeInput, checkingFc, chPswLg, errorFunc }) {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -51,7 +52,7 @@ function PhoneInput({ onCodeInput, checkingFc, chPswLg, errorFunc }) {
     codeRef.current.focus();
     result();
     document.addEventListener("click", (e) => {
-      if (langRef.current.classList.contains("active")) {
+      if (langRef.current?.classList.contains("active")) {
         setPhoneToggle(false);
       }
     });
@@ -92,33 +93,6 @@ function PhoneInput({ onCodeInput, checkingFc, chPswLg, errorFunc }) {
     checkingCode(debounceCode);
   }, [debounceCode]);
 
-  const getFormatedDate = () => {
-    const date = new Date();
-    const monthCompare = date.getMonth() + 1;
-    const minuteCompare = date.getMinutes();
-    const hourCompare = date.getHours();
-    const secondCompare = date.getSeconds();
-    const dayCompare = date.getDate();
-    const year = date.getFullYear();
-    const month = monthCompare < 10 ? `0${monthCompare}` : monthCompare;
-    const day = dayCompare < 10 ? `0${dayCompare}` : dayCompare;
-    const hours = hourCompare < 10 ? `0${hourCompare}` : hourCompare;
-    const minutes = minuteCompare < 10 ? `0${minuteCompare}` : minuteCompare;
-    const seconds = secondCompare < 10 ? `0${secondCompare}` : secondCompare;
-    return (
-      year +
-      "-" +
-      month +
-      "-" +
-      day +
-      " " +
-      hours +
-      ":" +
-      minutes +
-      ":" +
-      seconds
-    );
-  };
   const result = async () => {
     try {
       const res = await axios.get(
@@ -130,7 +104,7 @@ function PhoneInput({ onCodeInput, checkingFc, chPswLg, errorFunc }) {
             "Content-Type": "application/json",
             soft: "mp_web_app",
             softVersion: "3.0.0",
-            requestDate: getFormatedDate(),
+            requestDate: CurrentTime(),
             language: "GE",
           },
         }

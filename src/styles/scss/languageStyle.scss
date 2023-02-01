@@ -9,6 +9,9 @@
     padding: 12px;
     border-radius: 10px;
     cursor: pointer;
+    @media (max-width: 744px) {
+      background-color: var(--lang-hover-bg);
+    }
     .mm-lang__symbol {
       //   @include flexBox(inline-flex, center, center, nowrap, 8px);
       display: inline-flex;
@@ -18,8 +21,8 @@
       .mm-lang__lang {
         font-family: var(--firagoBook);
         color: var(--cl-84);
-        font-size: var(--ft-12);
-        @media (max-width: 480px) {
+        font-size: 12px;
+        @media (max-width: 744px) {
           display: none;
         }
       }
@@ -34,6 +37,9 @@
       display: inline-flex;
       justify-content: center;
       align-items: center;
+      @media (max-width: 744px) {
+        display: none;
+      }
     }
   }
   .mm-lang__current.active {

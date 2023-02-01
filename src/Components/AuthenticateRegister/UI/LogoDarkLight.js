@@ -10,6 +10,7 @@ function LogoDarkLight() {
     document.querySelectorAll(".dark-light-mode button").forEach((item) => {
       item.addEventListener("click", (e) => {
         const currTheme = e.currentTarget.classList[0];
+        localStorage.setItem("MM.theme", currTheme);
         setThemeMode(localStorage.getItem("MM.theme"));
       });
     });
